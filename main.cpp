@@ -4,8 +4,7 @@
 #include <fstream>
 #include <vector>
 
-//#include "BloomFilter.h"
-#include "StringBloomFilter.h"
+#include "BloomFilter.h"
 
 using namespace std;
 
@@ -29,10 +28,10 @@ int main() {
     int k = 21;
     int minAbundance = 3;
 
-    string inputPath = "/Users/filipsaina/CLionProjects/DeBrujinBloom/data/ecoli.fasta";
+    string inputPath = "./data/ecoli.fasta";
     string outputPath = "";
 
-    string workingDir = "/Users/filipsaina/CLionProjects/DeBrujinBloom/";
+    string workingDir = "./";
     string tmpDir = workingDir + "tmp/";
 
     string jellyfishBinPath = workingDir + "jellyfish";
@@ -56,14 +55,13 @@ int main() {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFilePath;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFilePath;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
     vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFilePath);
 
     BloomFilter bf = BloomFilter(kmers, k);
-
 
     // TODO remove these tests (all code until return)
 
