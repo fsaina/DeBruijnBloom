@@ -3,4 +3,4 @@ project(DeBrujinBloom)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(DeBrujinBloom main.cpp)
+add_executable(DeBrujinBloom main.cpp BloomFilter.cpp BloomFilter.h hashFn.cpp hashFn.h base.h)

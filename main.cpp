@@ -3,9 +3,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "BloomFilter.h"
 
 using namespace std;
 
+void bloomDemo();
 
 vector<string> read_file_in_vector(string inputPath){
     vector<string> mers;
@@ -27,10 +29,10 @@ int main() {
     int k = 21;
     int minAbundance = 3;
 
-    string inputPath = "/Users/filipsaina/CLionProjects/DeBrujinBloom/data/ecoli.fasta";
+    string inputPath = "./data/ecoli.fasta";
     string outputPath = "";
 
-    string workingDir = "/Users/filipsaina/CLionProjects/DeBrujinBloom/";
+    string workingDir = "./";
     string tmpDir = workingDir + "tmp/";
 
     string jellyfishBinPath = workingDir + "jellyfish";
@@ -54,7 +56,7 @@ int main() {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFilePath;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFilePath;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
@@ -65,5 +67,22 @@ int main() {
         cout << s << endl;
     }
 
+    // TODO remove this function call
+    bloomDemo();
+
     return 0;
+}
+
+/*
+ * TODO remove this function
+ */
+void bloomDemo() {
+    BloomFilter bloomFilter;
+
+    bloomFilter.add("kuki");
+    bloomFilter.add("sajo");
+    bloomFilter.add("verni");
+
+    cout << "Should be true: " << (bloomFilter.exists("kuki") ? "true" : "false") << endl;
+    cout << "Should be false: " << (bloomFilter.exists("brek") ? "true" : "false") << endl;
 }
