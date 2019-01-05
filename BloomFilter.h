@@ -16,12 +16,13 @@ class BloomFilter {
     vector<bool> bits;
 
 public:
-    BloomFilter(int size, int numHashes, int k);
     BloomFilter(vector<string>& kmers, int k);
     void add(const string s);
     bool contains(const string s);
 
+
 private:
+    BloomFilter(int size, int numHashes);
     array<uint64_t, 2> hash(const std::string *s);
     uint64_t nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, uint64_t filterSize);
     int calculate_filter_size(int kmerSize, int k);

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-BloomFilter::BloomFilter(int size, int numHashes, int k) : numHashes(numHashes), bits(size) {}
+BloomFilter::BloomFilter(int filterSize, int numHashes) : numHashes(numHashes), bits(filterSize) {}
 
 BloomFilter::BloomFilter(vector<string>& kmers, int k) {
     int filterSize = calculate_filter_size((int) kmers.size(), k);
@@ -16,7 +16,7 @@ BloomFilter::BloomFilter(vector<string>& kmers, int k) {
         filterSize++;
     }
 
-    new (this) BloomFilter(filterSize, numHashFunctions, k);
+    new (this) BloomFilter(filterSize, numHashFunctions);
 
     for (string s : kmers) {
         this->add(s);
