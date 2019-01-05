@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 
+#include "cmdline.h"
 #include "BloomFilter.h"
 
 using namespace std;
@@ -24,17 +25,26 @@ vector<string> read_file_in_vector(string inputPath){
     return mers;
 }
 
-int main() {
-    int k = 21;
-    int minAbundance = 3;
+int main(int argc, char *argv[]) {
+    cmdline::parser p;
 
-    string inputPath = "./data/ecoli.fasta";
-    string outputPath = "";
+    p.add<int>("kmers", 'k', "Number of k mers", true);
+    p.add<int>("minAbundance", 'a', "Minimal abundance of sequences required", true);
+    p.add<string>("input", 'i', "Path to the input fasta file", true);
+    p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./");
+    p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./jellyfish");
+
+    p.parse_check(argc, argv);
+
+    int k = p.get<int>("kmers");
+    int minAbundance = p.get<int>("minAbundance");
+    string inputPath = p.get<string>("input");
+    string outputPath = p.get<string>("output");
+    string jellyfishBinPath = p.get<string>("jellyfish");
 
     string workingDir = "./";
     string tmpDir = workingDir + "tmp/";
 
-    string jellyfishBinPath = workingDir + "jellyfish";
     string jellyfishTmpFilePath = "tmp.fa";
     string defaultJellyfishOutput = "mer_counts.jf";
 
@@ -55,7 +65,7 @@ int main() {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFilePath;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFilePath;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
