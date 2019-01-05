@@ -235,3 +235,5 @@ tmp/
 jellyfish
 .idea/
 bin/
+*.jf_0
+*.fa
