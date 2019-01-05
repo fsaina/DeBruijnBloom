@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "BloomFilter.h"
+#include "ExactDeBruijnGraph.h"
 
 using namespace std;
 
@@ -62,6 +63,8 @@ int main() {
     vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFilePath);
 
     BloomFilter bf = BloomFilter(kmers, k);
+
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
 
     // TODO remove these tests (all code until return)
 
