@@ -23,7 +23,7 @@ public:
 
 private:
     BloomFilter(int size, int numHashes);
-    array<uint64_t, 2> hash(const std::string *s);
+    array<uint64_t, 2> hash(const string *s);
     uint64_t nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, uint64_t filterSize);
     int calculate_filter_size(int kmerSize, int k);
     int calculate_number_of_hash_functions(int filterSize, float kmerSize);
