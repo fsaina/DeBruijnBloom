@@ -27,7 +27,7 @@ int BloomFilter::calculate_number_of_hash_functions(int filterSize, float kmerSi
     return (int) filterSize/kmerSize*log(2);
 }
 
-std::array<uint64_t, 2> BloomFilter::hash(const std::string *s) {
+array<uint64_t, 2> BloomFilter::hash(const string *s) {
     array<uint64_t, 2> hashes;
     uint32_t seed = 420;
     MurmurHash3_x64_128(s, (int) s->size(), seed, hashes.data());
@@ -40,7 +40,7 @@ inline uint64_t BloomFilter::nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, 
     return h;
 }
 
-void BloomFilter::add(const string s) {
+void BloomFilter::add(const string & s) {
     array<uint64_t, 2> hashes = hash(&s);
 
     for(int n = 0; n < this->numHashes; n++) {
@@ -48,7 +48,7 @@ void BloomFilter::add(const string s) {
     }
 }
 
-bool BloomFilter::contains(const string s) {
+bool BloomFilter::contains(const string & s) {
     array<uint64_t, 2> hashes = hash(&s);
 
     if (this->bits.size() == 0) {
