@@ -6,6 +6,7 @@
 
 #include "cmdline.h"
 #include "BloomFilter.h"
+#include "ExactDeBruijnGraph.h"
 
 using namespace std;
 
