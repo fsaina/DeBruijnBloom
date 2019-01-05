@@ -25,6 +25,28 @@ vector<string> read_file_in_vector(string inputPath){
     return mers;
 }
 
+// TODO remove implementation
+void create_test_bloom_implementation(vector<string> kmers, int k) {
+    BloomFilter bf = BloomFilter(kmers, k);
+
+    // NOTE test that there are no false negatives
+    for (string s : kmers) {
+        bool contains = bf.contains(s);
+        if (contains == false) {
+            printf("> ERROR\n");
+        }
+    }
+
+    bool contains;
+    // NOTE in bloom filter data structure false positives are possible, but false negatives should NEVER happen
+
+    contains = bf.contains("AAAAAAAAAAAAAAAAAAAAA");
+    cout << "Should be true : " << boolalpha  << contains << endl;
+
+    contains = bf.contains("ATGAACGGCAGCGGGCCAAAA");
+    cout << "Should be false : " << boolalpha << contains << endl;
+}
+
 int main(int argc, char *argv[]) {
     cmdline::parser p;
 
@@ -33,6 +55,7 @@ int main(int argc, char *argv[]) {
     p.add<string>("input", 'i', "Path to the input fasta file", true);
     p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./");
     p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./jellyfish");
+    p.add<string>("tmp", 't', "Path to directory where to write temporary files", false, "./tmp");
 
     p.parse_check(argc, argv);
 
@@ -41,11 +64,9 @@ int main(int argc, char *argv[]) {
     string inputPath = p.get<string>("input");
     string outputPath = p.get<string>("output");
     string jellyfishBinPath = p.get<string>("jellyfish");
+    string tmpDir = p.get<string>("tmp");
 
-    string workingDir = "./";
-    string tmpDir = workingDir + "tmp/";
-
-    string jellyfishTmpFilePath = "tmp.fa";
+    string jellyfishTmpFileName = "tmp.fa";
     string defaultJellyfishOutput = "mer_counts.jf";
 
     string command = "";
@@ -65,32 +86,14 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFilePath;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFileName;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
-    vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFilePath);
+    vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFileName);
 
-    BloomFilter bf = BloomFilter(kmers, k);
-
-    // TODO remove these tests (all code until return)
-
-    // NOTE test that there are no false negatives
-    for (string s : kmers) {
-        bool contains = bf.contains(s);
-        if (contains == false) {
-            printf("> ERROR\n");
-        }
-    }
-
-    bool contains;
-    // NOTE in bloom filter data structure false positives are possible, but false negatives should NEVER happen
-
-    contains = bf.contains("AAAAAAAAAAAAAAAAAAAAA");
-    cout << "Should be true : " << boolalpha  << contains << endl;
-
-    contains = bf.contains("ATGAACGGCAGCGGGCCAAAA");
-    cout << "Should be false : " << boolalpha << contains << endl;
+    // TODO remove test of bloom filter implementation
+    create_test_bloom_implementation(kmers, k);
 
     return 0;
 }
