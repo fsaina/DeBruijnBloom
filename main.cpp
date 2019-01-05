@@ -8,6 +8,8 @@
 #include "BloomFilter.h"
 #include "ExactDeBruijnGraph.h"
 
+void create_test_de_bruijn_graph(vector<string> kmers, int k);
+
 using namespace std;
 
 vector<string> read_file_in_vector(string inputPath){
@@ -46,6 +48,11 @@ void create_test_bloom_implementation(vector<string> &kmers, int k) {
 
     contains = bf.contains("ATGAACGGCAGCGGGCCAAAA");
     cout << "Should be false : " << boolalpha << contains << endl;
+}
+
+// TODO remove following function
+void create_test_de_bruijn_graph(vector<string> kmers, int k) {
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
 }
 
 int main(int argc, char *argv[]) {
@@ -95,6 +102,9 @@ int main(int argc, char *argv[]) {
 
     // TODO remove test of bloom filter implementation
     create_test_bloom_implementation(kmers, k);
+
+    // TODO remove test of graph implementation
+    create_test_de_bruijn_graph(kmers, k);
 
     return 0;
 }

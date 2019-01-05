@@ -10,11 +10,19 @@ class ExactDeBruijnGraph {
 public:
     ExactDeBruijnGraph(vector<string> &kmers, int k);
 
+    // TODO graph traversal function
+
 private:
     BloomFilter bloomFilter;
     set<string> criticalFP;
 
+    void initializeBloomFilter(vector<string> &kmers);
+
     void findCriticalFP(vector<string> &kmers);
+
+    set<string> findP(vector<string> &kmers);
+
+    bool bloomFilterQuery(string kmer);
 };
 
 #endif //DEBRUIJNBLOOM_EXACTDEBRUIJNGRAPH_H

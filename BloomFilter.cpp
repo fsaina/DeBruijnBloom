@@ -17,10 +17,6 @@ BloomFilter::BloomFilter(vector<string> &kmers, int k) {
     }
 
     new (this) BloomFilter(filterSize, numHashFunctions);
-
-    for (string s : kmers) {
-        this->add(s);
-    }
 }
 
 int BloomFilter::calculate_filter_size(int kmerSize, int k) {
