@@ -17,8 +17,8 @@ class BloomFilter {
 
 public:
     BloomFilter(vector<string>& kmers, int k);
-    void add(const string s);
-    bool contains(const string s);
+    void add(const string& s);
+    bool contains(const string& s);
 
 
 private:

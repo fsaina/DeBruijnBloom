@@ -44,7 +44,7 @@ inline uint64_t BloomFilter::nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, 
     return h;
 }
 
-void BloomFilter::add(const string s) {
+void BloomFilter::add(const string & s) {
     array<uint64_t, 2> hashes = hash(&s);
 
     for(int n = 0; n < this->numHashes; n++) {
@@ -52,7 +52,7 @@ void BloomFilter::add(const string s) {
     }
 }
 
-bool BloomFilter::contains(const string s) {
+bool BloomFilter::contains(const string & s) {
     array<uint64_t, 2> hashes = hash(&s);
 
     if (this->bits.size() == 0) {
