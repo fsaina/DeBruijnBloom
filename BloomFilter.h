@@ -16,7 +16,7 @@ class BloomFilter {
     vector<bool> bits;
 
 public:
-    BloomFilter(vector<string>& kmers, int k);
+    BloomFilter(vector<string> &kmers, int k);
     void add(const string s);
     bool contains(const string s);
 

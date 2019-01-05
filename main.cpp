@@ -26,7 +26,7 @@ vector<string> read_file_in_vector(string inputPath){
 }
 
 // TODO remove implementation
-void create_test_bloom_implementation(vector<string> kmers, int k) {
+void create_test_bloom_implementation(vector<string> &kmers, int k) {
     BloomFilter bf = BloomFilter(kmers, k);
 
     // NOTE test that there are no false negatives
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0" " > " + tmpDir + jellyfishTmpFileName;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFileName;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)

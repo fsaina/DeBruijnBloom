@@ -7,7 +7,7 @@ using namespace std;
 
 BloomFilter::BloomFilter(int filterSize, int numHashes) : numHashes(numHashes), bits(filterSize) {}
 
-BloomFilter::BloomFilter(vector<string>& kmers, int k) {
+BloomFilter::BloomFilter(vector<string> &kmers, int k) {
     int filterSize = calculate_filter_size((int) kmers.size(), k);
     int numHashFunctions = calculate_number_of_hash_functions(filterSize, (int) kmers.size());
 
