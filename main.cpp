@@ -12,6 +12,8 @@ void create_test_de_bruijn_graph(vector<string> kmers, int k);
 
 using namespace std;
 
+static const int K_MER_THRESHOLD = 4;
+
 vector<string> read_file_in_vector(string inputPath){
     vector<string> mers;
 
@@ -19,7 +21,7 @@ vector<string> read_file_in_vector(string inputPath){
 
     string line;
     while(getline(in, line)) {
-       if (line.size() > 4) {  // TODO fix magic number
+       if (line.size() > K_MER_THRESHOLD) {  
            mers.push_back(line);
        }
     }
