@@ -236,4 +236,5 @@ jellyfish
 .idea/
 bin/
 *.jf_0
+*.jf
 *.fa
