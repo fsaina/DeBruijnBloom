@@ -7,8 +7,11 @@
 #include "cmdline.h"
 #include "BloomFilter.h"
 #include "ExactDeBruijnGraph.h"
+#include "KmerUtil.h"
 
 void create_test_de_bruijn_graph(vector<string> kmers, int k);
+
+void create_kmer_extensions_test();
 
 using namespace std;
 
@@ -56,6 +59,14 @@ void create_test_bloom_implementation(vector<string> &kmers, int k) {
 void create_test_de_bruijn_graph(vector<string> kmers, int k) {
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
 }
+
+// TODO remove this function
+void create_kmer_extensions_test() {
+    for (string s : KmerUtil::generateExtensions("ACT")) {
+        cout << s << endl;
+    }
+}
+
 
 int main(int argc, char *argv[]) {
     cmdline::parser p;
@@ -107,6 +118,9 @@ int main(int argc, char *argv[]) {
 
     // TODO remove test of graph implementation
     create_test_de_bruijn_graph(kmers, k);
+
+    // TODO kmer extensions test, remove
+    create_kmer_extensions_test();
 
     return 0;
 }

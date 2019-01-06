@@ -18,8 +18,8 @@ class BloomFilter {
 public:
     BloomFilter(int size, int numHashes);
     BloomFilter(vector<string> &kmers, int k);
-    void add(const string & s);
-    bool contains(const string & s);
+    void add(const string &s);
+    bool contains(const string &s);
 
 private:
     array<uint64_t, 2> hash(const std::string *s);

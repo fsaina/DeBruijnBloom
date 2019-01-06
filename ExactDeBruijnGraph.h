@@ -20,7 +20,7 @@ private:
 
     void findCriticalFP(vector<string> &kmers);
 
-    set<string> findP(vector<string> &kmers);
+    set<string> findP(set<string> &S);
 
     bool bloomFilterQuery(string kmer);
 };

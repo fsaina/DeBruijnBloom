@@ -16,14 +16,15 @@ void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
     }
 }
 
-// TODO kmers should be loaded from file for the sake of RAM size as described in algorithm
+// TODO kmers should be loaded from file for the sake of RAM size as described in algorithm, SEQUENTIALLY
+// TODO add the reverse complements too
 void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
-    set<string> P = findP(kmers);
-
     set<string> S;
     for (string s : kmers) {
         S.insert(s);
     }
+
+    set<string> P = findP(S);
 
     for (string p : P) {
         if (S.find(p) == S.end()) { // if S does not contain
@@ -32,9 +33,26 @@ void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     }
 }
 
-set<string> ExactDeBruijnGraph::findP(vector<string> &kmers) {
-    // TODO generate extensions(extend suffix and prefix) and check if is not in bloom filter
-    return set<string>();
+set<string> ExactDeBruijnGraph::findP(set<string> &S) {
+    set<string> P;
+
+    for (string s : S) {
+        vector<string> E = KmerUtil::generateExtensions(s);
+        for (string e : E) {
+            if (bloomFilter.contains(e)) {
+                P.insert(e);
+            }
+        }
+
+        vector<string> rcE = KmerUtil::generateExtensions(KmerUtil::reverseComplement(s));
+        for (string e : rcE) {
+            if (bloomFilter.contains(e)) {
+                P.insert(e);
+            }
+        }
+    }
+
+    return P;
 }
 
 /*

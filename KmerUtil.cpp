@@ -26,3 +26,17 @@ char KmerUtil::complement(char c) {
             return 'U';
     }
 }
+
+vector<string> KmerUtil::generateExtensions(string kmer) {
+    vector<string> E;
+
+    unsigned long kmerSize = kmer.size();
+    for (string b : BASES) {
+        // left extensions
+        E.push_back(b + kmer.substr(0, kmerSize - 1));
+        // right extension
+        E.push_back(kmer.substr(1) + b);
+    }
+
+    return E;
+}
