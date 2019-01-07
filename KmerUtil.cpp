@@ -3,7 +3,7 @@
 const string KmerUtil::reverseComplement(string kmer) {
     unsigned long length = kmer.size();
 
-    for (int i = 0; i < length/2; ++i) {
+    for (int i = 0; i <= length/2; ++i) {
         swap(kmer[i], kmer[length-i-1]);
         kmer[i] = complement(kmer[i]);
         kmer[length-i-1]=complement(kmer[length-i-1]);
