@@ -31,7 +31,7 @@ public:
     Edge *getEdge(Node *n1, Node *n2);
     Node *getNode(const string &kmer);
     void connect(Node *n1, Node *n2);
-    void printGraph();
+    void print();
 };
 
 #endif //DEBRUIJNBLOOM_DeBruijn_H

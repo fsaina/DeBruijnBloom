@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 //    Tests::run_all_tests(kmers, k);
 
     DeBruijn graph = DeBruijn(kmers, k);
-    graph.printGraph();
+    graph.print();
 
     return 0;
 }

@@ -66,7 +66,7 @@ void DeBruijn::connect(DeBruijn::Node *n1, DeBruijn::Node *n2) {
     }
 }
 
-void DeBruijn::printGraph() {
+void DeBruijn::print() {
     for (auto & kmerNodePair : kmerNodeMap) {
         for (auto & out_edge : kmerNodePair.second->outgoingEdges) {
             cout
