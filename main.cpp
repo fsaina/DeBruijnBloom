@@ -5,13 +5,7 @@
 #include <vector>
 
 #include "cmdline.h"
-#include "BloomFilter.h"
-#include "ExactDeBruijnGraph.h"
-#include "KmerUtil.h"
-
-void create_test_de_bruijn_graph(vector<string> kmers, int k);
-
-void create_kmer_extensions_test();
+#include "Tests.h"
 
 using namespace std;
 
@@ -24,7 +18,7 @@ vector<string> read_file_in_vector(string inputPath){
 
     string line;
     while(getline(in, line)) {
-       if (line.size() > K_MER_THRESHOLD) {  
+       if (line.size() > K_MER_THRESHOLD) {
            mers.push_back(line);
        }
     }
@@ -32,41 +26,6 @@ vector<string> read_file_in_vector(string inputPath){
     in.close();
     return mers;
 }
-
-// TODO remove implementation
-void create_test_bloom_implementation(vector<string> &kmers, int k) {
-    BloomFilter bf = BloomFilter(kmers, k);
-
-    // NOTE test that there are no false negatives
-    for (string s : kmers) {
-        bool contains = bf.contains(s);
-        if (contains == false) {
-            printf("> ERROR\n");
-        }
-    }
-
-    bool contains;
-    // NOTE in bloom filter data structure false positives are possible, but false negatives should NEVER happen
-
-    contains = bf.contains("AAAAAAAAAAAAAAAAAAAAA");
-    cout << "Should be true : " << boolalpha  << contains << endl;
-
-    contains = bf.contains("ATGAACGGCAGCGGGCCAAAA");
-    cout << "Should be false : " << boolalpha << contains << endl;
-}
-
-// TODO remove following function
-void create_test_de_bruijn_graph(vector<string> kmers, int k) {
-    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
-}
-
-// TODO remove this function
-void create_kmer_extensions_test() {
-    for (string s : KmerUtil::generateExtensions("ACT")) {
-        cout << s << endl;
-    }
-}
-
 
 int main(int argc, char *argv[]) {
     cmdline::parser p;
@@ -107,20 +66,13 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFileName;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0 > " + tmpDir + jellyfishTmpFileName;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
     vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFileName);
 
-    // TODO remove test of bloom filter implementation
-    create_test_bloom_implementation(kmers, k);
-
-    // TODO remove test of graph implementation
-    create_test_de_bruijn_graph(kmers, k);
-
-    // TODO kmer extensions test, remove
-    create_kmer_extensions_test();
+    Tests::run_all_tests(kmers, k);
 
     return 0;
 }
