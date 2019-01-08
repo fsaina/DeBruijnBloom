@@ -12,7 +12,10 @@ Space-efficient and exact de Bruijn graph representation based on a Bloom filter
 
 ### Data
 The E.Coli genome (data/ecoli.fasta) was taken from http://bacteria.ensembl.org/Escherichia_coli_14a/Info/Index/
-// TODO create synthetic genome sequences
+
+To create the synthetic genome sequences:
+1. Make sure `./data/generate.sh` is executable, otherwise run `chmod +x ./data/generate.sh`
+2. Run `./data/generate.sh N > ./data/<NAME_OF_FILE>.fasta` (e.g. `./data/generate.sh 100 > ./data/uniform_100.fasta`)
 
 
 This project is licensed under the terms of the MIT license.
