@@ -6,7 +6,7 @@
 
 #include "cmdline.h"
 #include "Tests.h"
-#include "DeBruijn.h"
+#include "ExactDeBruijnGraph.h"
 
 using namespace std;
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 
     // Count all k-mers https://github.com/gmarcais/Jellyfish/tree/master/doc
     command = jellyfishBinPath + " count -m " + to_string(k)
-              + " -s 100M -t 4 -C -L " + to_string(minAbundance)
+              + " -s 100M -t 4 -L " + to_string(minAbundance) // TODO maybe return '-C' flag
               + " " + inputPath
               + " -o " + tmpDir + '/' + defaultJellyfishOutput;
     system(command.c_str());
@@ -72,7 +72,9 @@ int main(int argc, char *argv[]) {
     // read the file and load only the k-mers (not their counts)
     vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
 
-    Tests::run_all_tests(kmers, k);
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
+
+//    Tests::run_all_tests(kmers, k);
 
     return 0;
 }
