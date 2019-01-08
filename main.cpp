@@ -63,15 +63,15 @@ int main(int argc, char *argv[]) {
     command = jellyfishBinPath + " count -m " + to_string(k)
               + " -s 100M -t 4 -C -L " + to_string(minAbundance)
               + " " + inputPath
-              + " -o " + tmpDir + defaultJellyfishOutput;
+              + " -o " + tmpDir + '/' + defaultJellyfishOutput;
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFileName;
+    command = jellyfishBinPath + " dump " + tmpDir + '/' + defaultJellyfishOutput + " > " + tmpDir + '/' + jellyfishTmpFileName;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
-    vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFileName);
+    vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
 
     Tests::run_all_tests(kmers, k);
 
