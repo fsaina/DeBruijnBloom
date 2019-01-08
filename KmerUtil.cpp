@@ -61,3 +61,7 @@ vector<string> KmerUtil::generateRightExtensions(string kmer) {
 
     return E;
 }
+
+string KmerUtil::extractLastKmerInSequence(string sequence, int k) {
+    return sequence.substr(sequence.size() - k);
+}

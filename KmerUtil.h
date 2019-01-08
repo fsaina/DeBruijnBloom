@@ -19,6 +19,9 @@ namespace KmerUtil {
     vector<string> generateLeftExtensions(string kmer);
 
     vector<string> generateRightExtensions(string kmer);
+
+    string extractLastKmerInSequence(string sequence, int k);
+
 }
 
 

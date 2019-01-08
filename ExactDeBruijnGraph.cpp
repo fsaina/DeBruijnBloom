@@ -1,8 +1,10 @@
 #include <iostream>
+#include <list>
+#include <string.h>
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
-ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : bloomFilter(kmers, k) {
+ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), bloomFilter(kmers, k) {
     initializeBloomFilter(kmers);
     findCriticalFP(kmers);
 }
@@ -60,18 +62,18 @@ set<string> ExactDeBruijnGraph::findP(set<string> &S) {
  * Each query to the Bloom filter is modified such that the yes answer is returned
  * if and only if the Bloom filter answers yes and the element is not in cFP.
  */
-bool ExactDeBruijnGraph::bloomFilterQuery(string kmer) {
+bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
     return bloomFilter.contains(kmer) && criticalFP.count(kmer) == 0;
 }
 
-void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int breadth, int depth) {
+void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int maxBreadth, int maxDepth) {
     set<string> startingKmers;
     for (string kmer : kmers) {
         vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
 
         int inboundCount = 0;
         for (string e : leftExtensions) {
-            if (bloomFilterQuery(e)) {
+            if (isPartOfDeBruijnGraph(e)) {
                 inboundCount++;
             }
         }
@@ -80,8 +82,60 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int b
         }
     }
 
-    for (string s : startingKmers) {
-        cout << s << endl;
+    set<string> contigs;
+    for (string start : startingKmers) {
+        list<string> branches;
+        branches.push_back(start);
+
+        int depth = 0;
+        while (depth < maxDepth) {
+            list<string> branchesToAdd;
+            for (string& branch : branches) {
+                if (branch.size() - k < depth) continue;
+
+                string lastKmer = KmerUtil::extractLastKmerInSequence(branch, k);
+
+                vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
+                vector<string> validExtensions;
+                for (string e : extensions) {
+                    if (isPartOfDeBruijnGraph(e)) {
+                        validExtensions.push_back(e);
+                    }
+                }
+                if (validExtensions.empty()) continue;
+
+                string branchClone(branch);
+                unsigned long extensionsSize = validExtensions.size();
+                for (int i = 0; i < extensionsSize; ++i) {
+                    char &lastChar = validExtensions[i].back();
+                    if (i == 0) {
+                        branch.push_back(lastChar);
+//                        branch.replace(branch.size(), 0, string(1, lastChar));
+                    } else {
+                        string newBranch(branchClone);
+                        newBranch.push_back(lastChar);
+                        branchesToAdd.push_back(newBranch);
+                    }
+                }
+            }
+
+            for (string branch : branchesToAdd) {
+                if (branches.size() >= maxBreadth)
+                    break;
+                branches.push_back(branch);
+            }
+
+            depth++;
+        }
+
+        for (string branch : branches) {
+            if (branch.length() >= 2*k + 1) {
+                contigs.insert(branch);
+            }
+        }
     }
-    cout << startingKmers.size() << endl;
+
+    for (string contig : contigs) {
+        cout << contig << endl;
+    }
 }
