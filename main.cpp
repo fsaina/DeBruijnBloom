@@ -6,6 +6,7 @@
 
 #include "cmdline.h"
 #include "Tests.h"
+#include "DeBruijn.h"
 
 using namespace std;
 
@@ -16,9 +17,10 @@ vector<string> read_file_in_vector(string inputPath){
 
     string line;
     while(getline(in, line)) {
-       if (line.find(">") != 0) {
+        // ignore lines starting with '>'
+        if (line.find(">") != 0) {
            mers.push_back(line);
-       }
+        }
     }
 
     in.close();
