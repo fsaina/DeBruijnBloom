@@ -6,7 +6,6 @@
 
 #include "cmdline.h"
 #include "Tests.h"
-#include "DeBruijn.h"
 
 using namespace std;
 
@@ -74,9 +73,6 @@ int main(int argc, char *argv[]) {
     vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
 
     Tests::run_all_tests(kmers, k);
-
-//    DeBruijn graph = DeBruijn(kmers, k);
-//    graph.print();
 
     return 0;
 }
