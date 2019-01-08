@@ -13,3 +13,6 @@ Space-efficient and exact de Bruijn graph representation based on a Bloom filter
 ### Data
 The E.Coli genome (data/ecoli.fasta) was taken from http://bacteria.ensembl.org/Escherichia_coli_14a/Info/Index/
 // TODO create synthetic genome sequences
+
+
+This project is licensed under the terms of the MIT license.
