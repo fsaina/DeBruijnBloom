@@ -9,8 +9,6 @@
 
 using namespace std;
 
-static const int K_MER_THRESHOLD = 4;
-
 vector<string> read_file_in_vector(string inputPath){
     vector<string> mers;
 
@@ -18,7 +16,7 @@ vector<string> read_file_in_vector(string inputPath){
 
     string line;
     while(getline(in, line)) {
-       if (line.size() > K_MER_THRESHOLD) {
+       if (line.find(">") != 0) {
            mers.push_back(line);
        }
     }
