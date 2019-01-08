@@ -2,7 +2,6 @@
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
-
 ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : bloomFilter(kmers, k) {
     initializeBloomFilter(kmers);
     findCriticalFP(kmers);
@@ -27,7 +26,8 @@ void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     set<string> P = findP(S);
 
     for (string p : P) {
-        if (S.find(p) == S.end()) { // if S does not contain
+        // if S does not contain p
+        if (S.find(p) == S.end()) {
             criticalFP.insert(p);
         }
     }
@@ -62,4 +62,26 @@ set<string> ExactDeBruijnGraph::findP(set<string> &S) {
  */
 bool ExactDeBruijnGraph::bloomFilterQuery(string kmer) {
     return bloomFilter.contains(kmer) && criticalFP.count(kmer) == 0;
+}
+
+void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int breadth, int depth) {
+    set<string> startingKmers;
+    for (string kmer : kmers) {
+        vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
+
+        int inboundCount = 0;
+        for (string e : leftExtensions) {
+            if (bloomFilterQuery(e)) {
+                inboundCount++;
+            }
+        }
+        if (inboundCount == 0) {
+            startingKmers.insert(kmer);
+        }
+    }
+
+    for (string s : startingKmers) {
+        cout << s << endl;
+    }
+    cout << startingKmers.size() << endl;
 }

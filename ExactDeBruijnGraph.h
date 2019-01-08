@@ -10,7 +10,7 @@ class ExactDeBruijnGraph {
 public:
     ExactDeBruijnGraph(vector<string> &kmers, int k);
 
-    // TODO graph traversal function
+    void traverse(vector<string> kmers, string outputPath, int breadth, int depth);
 
 private:
     BloomFilter bloomFilter;

@@ -73,6 +73,7 @@ int main(int argc, char *argv[]) {
     vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
 
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
+    graph.traverse(kmers, outputPath, 20, 500);
 
 //    Tests::run_all_tests(kmers, k);
 

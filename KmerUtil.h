@@ -15,6 +15,10 @@ namespace KmerUtil {
     char complement(char c);
 
     vector<string> generateExtensions(string kmer);
+
+    vector<string> generateLeftExtensions(string kmer);
+
+    vector<string> generateRightExtensions(string kmer);
 }
 
 

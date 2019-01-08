@@ -40,3 +40,24 @@ vector<string> KmerUtil::generateExtensions(string kmer) {
 
     return E;
 }
+
+vector<string> KmerUtil::generateLeftExtensions(string kmer) {
+    vector<string> E;
+
+    unsigned long kmerSize = kmer.size();
+    for (string b : BASES) {
+        E.push_back(b + kmer.substr(0, kmerSize - 1));
+    }
+
+    return E;
+}
+
+vector<string> KmerUtil::generateRightExtensions(string kmer) {
+    vector<string> E;
+
+    for (string b : BASES) {
+        E.push_back(kmer.substr(1) + b);
+    }
+
+    return E;
+}
