@@ -5,7 +5,7 @@
 
 using namespace std;
 
-BloomFilter::BloomFilter(int filterSize, int numHashes) : numHashes(numHashes), bits(filterSize) {}
+BloomFilter::BloomFilter(int filterSize, int numHashes) : bits(filterSize), numHashes(numHashes) {}
 
 BloomFilter::BloomFilter(vector<string> &kmers, int k) {
     int filterSize = calculate_filter_size((int) kmers.size(), k);
@@ -30,7 +30,7 @@ int BloomFilter::calculate_number_of_hash_functions(int filterSize, float kmerSi
 array<uint64_t, 2> BloomFilter::hash(const string *s) {
     array<uint64_t, 2> hashes;
     uint32_t seed = 420;
-    MurmurHash3_x64_128(s, (int) s->size(), seed, hashes.data());
+    MurmurHash3_x64_128(s->c_str(), (int) s->size(), seed, hashes.data());
     return hashes; // return two 64 bit hashes
 }
 
@@ -40,18 +40,18 @@ inline uint64_t BloomFilter::nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, 
     return h;
 }
 
-void BloomFilter::add(const string & s) {
+void BloomFilter::add(const string s) {
     array<uint64_t, 2> hashes = hash(&s);
 
-    for(int n = 0; n < this->numHashes; n++) {
-        this->bits[nthHash(n, hashes[0], hashes[1], this->bits.size())] = true;
+    for(int n = 0; n < numHashes; n++) {
+        bits[nthHash(n, hashes[0], hashes[1], this->bits.size())] = true;
     }
 }
 
-bool BloomFilter::contains(const string & s) {
+bool BloomFilter::contains(const string s) {
     array<uint64_t, 2> hashes = hash(&s);
 
-    if (this->bits.size() == 0) {
+    if (bits.size() == 0) {
         throw "Empty bloom filter array!";
     }
 
@@ -60,7 +60,7 @@ bool BloomFilter::contains(const string & s) {
     }
 
     for(int n = 0; n < this->numHashes; n++){
-        if (this->bits[nthHash(n, hashes[0], hashes[1], bits.size())] == false) {
+        if (bits[nthHash(n, hashes[0], hashes[1], bits.size())] == false) {
             return false;
         }
     }

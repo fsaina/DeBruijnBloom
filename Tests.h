@@ -15,6 +15,8 @@ namespace Tests {
     bool create_test_de_bruijn_graph(vector<string> kmers, int k);
 
     bool create_kmer_extensions_test();
+
+    bool custom_test_bloom_implementation();
 }
 
 

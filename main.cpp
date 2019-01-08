@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     p.add<int>("minAbundance", 'a', "Minimal abundance of sequences required", true);
     p.add<string>("input", 'i', "Path to the input fasta file", true);
     p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./");
-    p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./jellyfish");
+    p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./bin/jellyfish");
     p.add<string>("tmp", 't', "Path to directory where to write temporary files", false, "./tmp");
 
     p.parse_check(argc, argv);
@@ -67,16 +67,16 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     // Convert binary jellyfish output to human readable format
-    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + "_0 > " + tmpDir + jellyfishTmpFileName;
+    command = jellyfishBinPath + " dump " + tmpDir + defaultJellyfishOutput + " > " + tmpDir + jellyfishTmpFileName;
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
     vector<string> kmers = read_file_in_vector(tmpDir + jellyfishTmpFileName);
 
-//    Tests::run_all_tests(kmers, k);
+    Tests::run_all_tests(kmers, k);
 
-    DeBruijn graph = DeBruijn(kmers, k);
-    graph.print();
+//    DeBruijn graph = DeBruijn(kmers, k);
+//    graph.print();
 
     return 0;
 }
