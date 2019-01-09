@@ -1,5 +1,5 @@
 Faculty of Electrical Engineering and Computing
-Bioinformatics projects
+Bioinformatics course projects (https://www.fer.unizg.hr/en/course/bio)
 
 Replication of paper:
 Space-efficient and exact de Bruijn graph representation based on a Bloom filter ( https://almob.biomedcentral.com/articles/10.1186/1748-7188-8-22 )
