@@ -76,7 +76,10 @@ int main(int argc, char *argv[]) {
 
     cout<< "Number of kmers: " << kmers.size()<< endl;
 
+    // Create graph from kmers
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
+
+    // Traverse graph and save generated contigs in file
     graph.traverse(kmers, outputPath, 20, 500);
 
 //    Tests::run_all_tests(kmers, k);
