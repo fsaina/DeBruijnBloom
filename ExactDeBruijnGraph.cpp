@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <string.h>
+#include <fstream>
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
@@ -139,7 +140,10 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
         }
     }
 
+    ofstream output;
+    output.open(outputPath);
     for (string contig : contigs) {
-        cout << contig << endl;
+        output << contig << endl;
     }
+    output.close();
 }
