@@ -20,6 +20,6 @@ To create custom synthetic genome sequences:
 To create the synthetic genome sequences(E.Coli):
 1. Compile wgsim tool `gcc -g -O2 -Wall -o ./bin/wgsim ./wgsim/wgsim.c -lz -lm`
 2. For creating synthetic sequences of length x, with error y, run
-   `./bin/wgsim -1 x -d0 -S11 -e0 -r y ./data/Escherichia_coli.fa ./data/read-100-0.fq /dev/null`
+   `./bin/wgsim -1 x -d0 -S11 -e0 -r y ./data/Escherichia_coli.fa ./data/read-x-y.fq /dev/null`
 
 This project is licensed under the terms of the MIT license.

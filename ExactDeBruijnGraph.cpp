@@ -12,6 +12,7 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), blo
 
 // TODO kmers should be loaded from file for the sake of RAM size as described in algorithm
 void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
+    cout << "Creating Bloom filter..." << endl;
     for (string kmer : kmers) {
         bloomFilter.add(kmer);
 //        bloomFilter.add(KmerUtil::reverseComplement(kmer)); TODO add support for reverse complemnts later if have enough RAM
@@ -21,6 +22,7 @@ void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
 // TODO kmers should be loaded from file for the sake of RAM size as described in algorithm, SEQUENTIALLY
 // TODO add the reverse complements too if have enough RAM
 void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
+    cout << "Finding critical FP set..." << endl;
     set<string> S;
     for (string s : kmers) {
         S.insert(s);
@@ -68,6 +70,7 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
 }
 
 void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int maxBreadth, int maxDepth) {
+    cout << "Start traversal..." << endl;
     set<string> startingKmers;
     for (string kmer : kmers) {
         vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
@@ -83,12 +86,13 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
         }
     }
 
-    cout << "Starting kmers: " << startingKmers.size() << endl;
+    unsigned long startingKmersSize = startingKmers.size();
     int kmerIndex = 1; // just for output tracking
+
     set<string> contigs;
     set<string> marked;
     for (string start : startingKmers) {
-        cout << "Kmer: " << kmerIndex++ << endl;
+        cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
         list<string> branches;
         branches.push_back(start);
 

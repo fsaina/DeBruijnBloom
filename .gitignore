@@ -231,6 +231,7 @@ Temporary Items
 # End of https://www.gitignore.io/api/c,vim,git,c++,clion,cmake
 
 # Custom files
+output/
 tmp/
 jellyfish
 .idea/
