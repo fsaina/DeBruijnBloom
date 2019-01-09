@@ -8,7 +8,7 @@ Space-efficient and exact de Bruijn graph representation based on a Bloom filter
 1. Clone this repo
 2. Download or compile Jellyfish executable version 2.x.x ( https://github.com/gmarcais/Jellyfish/releases ) into project root directory as 'jellyfish'
 3. Compile the project with `g++ -std=c++14 main.cpp BloomFilter.cpp ExactDeBruijnGraph.cpp KmerUtil.cpp MurmurHash3.cpp Tests.cpp -o ./bin/DeBrujinBloom`
-4. Run it with `./bin/DeBrujinBloom -k 21 --minAbundance 3 --input data/ecoli/ecoli.fasta`
+4. Run it with `./bin/DeBrujinBloom -k 21 --minAbundance 3 --maxBreadth 20 --maxDepth 500 --input data/ecoli/ecoli.fasta`
 
 ### Data
 The E.Coli genome (data/ecoli.fasta) was taken from http://bacteria.ensembl.org/Escherichia_coli_14a/Info/Index/

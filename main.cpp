@@ -34,6 +34,8 @@ int main(int argc, char *argv[]) {
 
     p.add<int>("kmers", 'k', "Number of k mers", true);
     p.add<int>("minAbundance", 'a', "Minimal abundance of sequences required", true);
+    p.add<int>("maxBreadth", 'b', "Maximum node breadth while doing a BFS traversal of the graph", true);
+    p.add<int>("maxDepth", 'd', "Maximum node breadth while doing a BFS traversal of the graph", true);
     p.add<string>("input", 'i', "Path to the input fasta file", true);
     p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./output");
     p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./bin/jellyfish");
@@ -43,6 +45,8 @@ int main(int argc, char *argv[]) {
 
     int k = p.get<int>("kmers");
     int minAbundance = p.get<int>("minAbundance");
+    int maxBreadth = p.get<int>("maxBreadth");
+    int maxDepth = p.get<int>("maxDepth");
     string inputPath = p.get<string>("input");
     string outputPath = p.get<string>("output");
     string jellyfishBinPath = p.get<string>("jellyfish");
@@ -84,7 +88,7 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
-    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, 20, 500);
+    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
 
 //    Tests::run_all_tests(kmers, k);
 
