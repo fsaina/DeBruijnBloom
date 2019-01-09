@@ -82,9 +82,12 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
         }
     }
 
+    cout << "Starting kmers: " << startingKmers.size() << endl;
+    int kmerIndex = 1; // just for output tracking
     set<string> contigs;
     set<string> marked;
     for (string start : startingKmers) {
+        cout << "Kmer: " << kmerIndex++ << endl;
         list<string> branches;
         branches.push_back(start);
 

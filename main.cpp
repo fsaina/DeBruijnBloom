@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
     // read the file and load only the k-mers (not their counts)
     vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
 
+    cout<<kmers.size()<<endl;
+
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
     graph.traverse(kmers, outputPath, 20, 500);
 
