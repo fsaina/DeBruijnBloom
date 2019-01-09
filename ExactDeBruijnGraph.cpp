@@ -83,6 +83,7 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
     }
 
     set<string> contigs;
+    set<string> marked;
     for (string start : startingKmers) {
         list<string> branches;
         branches.push_back(start);
@@ -94,11 +95,12 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
                 if (branch.size() - k < depth) continue;
 
                 string lastKmer = KmerUtil::extractLastKmerInSequence(branch, k);
+                marked.insert(lastKmer);
 
                 vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
                 vector<string> validExtensions;
                 for (string e : extensions) {
-                    if (isPartOfDeBruijnGraph(e)) {
+                    if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
                         validExtensions.push_back(e);
                     }
                 }
@@ -110,7 +112,6 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
                     char &lastChar = validExtensions[i].back();
                     if (i == 0) {
                         branch.push_back(lastChar);
-//                        branch.replace(branch.size(), 0, string(1, lastChar));
                     } else {
                         string newBranch(branchClone);
                         newBranch.push_back(lastChar);
