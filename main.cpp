@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     p.add<int>("kmers", 'k', "Number of k mers", true);
     p.add<int>("minAbundance", 'a', "Minimal abundance of sequences required", true);
     p.add<string>("input", 'i', "Path to the input fasta file", true);
-    p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./");
+    p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./output");
     p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./bin/jellyfish");
     p.add<string>("tmp", 't', "Path to directory where to write temporary files", false, "./tmp");
 
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
 
     string jellyfishTmpFileName = "tmp.fa";
     string defaultJellyfishOutput = "mer_counts.jf";
+    string defaultProgramOutput = "output.fasta";
 
     string command = "";
 
@@ -76,8 +77,14 @@ int main(int argc, char *argv[]) {
 
     cout<< "Number of kmers: " << kmers.size()<< endl;
 
+    command = "rm -rf " + outputPath;
+    system(command.c_str());
+
+    command = "mkdir " + outputPath;
+    system(command.c_str());
+
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
-    graph.traverse(kmers, outputPath, 20, 500);
+    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, 20, 500);
 
 //    Tests::run_all_tests(kmers, k);
 
