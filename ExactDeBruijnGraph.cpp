@@ -13,6 +13,8 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), blo
 // TODO kmers should be loaded from file for the sake of RAM size as described in algorithm
 void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
     cout << "Creating Bloom filter..." << endl;
+
+    // Add all solid kmers in bloom filter
     for (string kmer : kmers) {
         bloomFilter.add(kmer);
 //        bloomFilter.add(KmerUtil::reverseComplement(kmer)); TODO add support for reverse complemnts later if have enough RAM
@@ -23,13 +25,17 @@ void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
 // TODO add the reverse complements too if have enough RAM
 void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     cout << "Finding critical FP set..." << endl;
+
+    // Create set S, set of all kmers that are in graph
     set<string> S;
     for (string s : kmers) {
         S.insert(s);
     }
 
+    // Find set P. Set P is set E filtered with Bloom filter. Where E is set of extensions of S(one node extensions).
     set<string> P = findP(S);
 
+    // Set of critical false positives is gained as P \ S.
     for (string p : P) {
         // if S does not contain p
         if (S.find(p) == S.end()) {
@@ -41,6 +47,8 @@ void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
 set<string> ExactDeBruijnGraph::findP(set<string> &S) {
     set<string> P;
 
+    // For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
+    // says that they are part of graph. I.e. set P is set that contains true positives and false positives.
     for (string s : S) {
         vector<string> E = KmerUtil::generateExtensions(s);
         for (string e : E) {
@@ -71,6 +79,8 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
 
 void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
+
+    // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
     set<string> startingKmers;
     for (string kmer : kmers) {
         vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
@@ -89,22 +99,24 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
     unsigned long startingKmersSize = startingKmers.size();
     int kmerIndex = 1; // just for output tracking
 
-    set<string> contigs;
-    set<string> marked;
+    set<string> contigs; // set of generated contigs
+    set<string> marked; // marking structure, used to avoid already seen nodes
     for (string start : startingKmers) {
         cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
-        list<string> branches;
-        branches.push_back(start);
+        list<string> paths;
+        paths.push_back(start); // add starting kmer as first path to search
 
-        int depth = 0;
+        int depth = 0; // depth is counted in nodes
         while (depth < maxDepth) {
-            list<string> branchesToAdd;
-            for (string& branch : branches) {
-                if (branch.size() - k < depth) continue;
+            list<string> pathsToAdd;
+            for (string& path : paths) {
+                // ignore paths for which search already stopped
+                if (path.size() - k < depth) continue;
 
-                string lastKmer = KmerUtil::extractLastKmerInSequence(branch, k);
+                string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
                 marked.insert(lastKmer);
 
+                // find neighbours of last kmer in observing path and filter them(check if are part of graph)
                 vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
                 vector<string> validExtensions;
                 for (string e : extensions) {
@@ -112,34 +124,37 @@ void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int m
                         validExtensions.push_back(e);
                     }
                 }
+
                 if (validExtensions.empty()) continue;
 
-                string branchClone(branch);
+                // prolong path with new neighbour nodes
+                string pathClone(path);
                 unsigned long extensionsSize = validExtensions.size();
                 for (int i = 0; i < extensionsSize; ++i) {
                     char &lastChar = validExtensions[i].back();
-                    if (i == 0) {
-                        branch.push_back(lastChar);
-                    } else {
-                        string newBranch(branchClone);
-                        newBranch.push_back(lastChar);
-                        branchesToAdd.push_back(newBranch);
+                    if (i == 0) { // to observing path only add last char of next node
+                        path.push_back(lastChar);
+                    } else { // if there is more than one valid next node duplicate the current path and branch the search
+                        string newPath(pathClone);
+                        newPath.push_back(lastChar);
+                        pathsToAdd.push_back(newPath);
                     }
                 }
             }
 
-            for (string branch : branchesToAdd) {
-                if (branches.size() >= maxBreadth)
+            for (string p : pathsToAdd) {
+                if (paths.size() >= maxBreadth)
                     break;
-                branches.push_back(branch);
+                paths.push_back(p);
             }
 
             depth++;
         }
 
-        for (string branch : branches) {
-            if (branch.length() >= 2*k + 1) {
-                contigs.insert(branch);
+        for (string p : paths) {
+            // contigs shorter that 2k+1 characters are ignored
+            if (p.length() >= 2*k + 1) {
+                contigs.insert(p);
             }
         }
     }
