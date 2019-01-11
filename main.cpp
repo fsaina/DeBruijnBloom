@@ -89,8 +89,6 @@ int main(int argc, char *argv[]) {
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, countMers, k);
     graph.traverse(inputPath, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
 
-//    Tests::run_all_tests(kmers, k);
-
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;
     cout << "Time: " << time << " seconds" << endl;
