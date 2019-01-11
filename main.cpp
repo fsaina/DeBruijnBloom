@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "cmdline.h"
-#include "Tests.h"
 #include "ExactDeBruijnGraph.h"
 
 using namespace std;
