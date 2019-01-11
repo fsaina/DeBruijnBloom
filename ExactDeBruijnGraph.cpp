@@ -5,32 +5,44 @@
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
-ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), bloomFilter(kmers, k) {
-    initializeBloomFilter(kmers);
-    findCriticalFP(kmers);
+ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k) : k(k), bloomFilter(mer_counts, k) {
+    initializeBloomFilter(inputPath);
+    findCriticalFP(inputPath);
 }
 
-// TODO kmers should be loaded from file for the sake of RAM size as described in algorithm
-void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
+void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
 
-    // Add all solid kmers in bloom filter
-    for (string kmer : kmers) {
-        bloomFilter.add(kmer);
-//        bloomFilter.add(KmerUtil::reverseComplement(kmer)); TODO add support for reverse complemnts later if have enough RAM
+    ifstream in(inputPath);
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+           bloomFilter.add(line);
+        }
     }
+//        bloomFilter.add(KmerUtil::reverseComplement(kmer)); TODO add support for reverse complemnts later if have enough RAM
+
+    in.close();
 }
 
 // TODO kmers should be loaded from file for the sake of RAM size as described in algorithm, SEQUENTIALLY
 // TODO add the reverse complements too if have enough RAM
-void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
+void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
 
     // Create set S, set of all kmers that are in graph
     set<string> S;
-    for (string s : kmers) {
-        S.insert(s);
+    ifstream in(inputPath);
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+           S.insert(line);
+        }
     }
+
+    in.close();
 
     // Find set P. Set P is set E filtered with Bloom filter. Where E is set of extensions of S(one node extensions).
     set<string> P = findP(S);
@@ -77,24 +89,32 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
     return bloomFilter.contains(kmer) && criticalFP.count(kmer) == 0;
 }
 
-void ExactDeBruijnGraph::traverse(vector<string> kmers, string outputPath, int maxBreadth, int maxDepth) {
+void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
 
     // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
     set<string> startingKmers;
-    for (string kmer : kmers) {
-        vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
 
-        int inboundCount = 0;
-        for (string e : leftExtensions) {
-            if (isPartOfDeBruijnGraph(e)) {
-                inboundCount++;
-            }
-        }
-        if (inboundCount == 0) {
-            startingKmers.insert(kmer);
+    ifstream in(inputPath);
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+          vector<string> leftExtensions = KmerUtil::generateLeftExtensions(line);
+
+          int inboundCount = 0;
+          for (string e : leftExtensions) {
+              if (isPartOfDeBruijnGraph(e)) {
+                  inboundCount++;
+              }
+          }
+          if (inboundCount == 0) {
+              startingKmers.insert(line);
+          }
         }
     }
+
+    in.close();
 
     unsigned long startingKmersSize = startingKmers.size();
     int kmerIndex = 1; // just for output tracking

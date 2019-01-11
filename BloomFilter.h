@@ -17,7 +17,7 @@ class BloomFilter {
 
 public:
     BloomFilter(int size, int numHashes);
-    BloomFilter(vector<string> &kmers, int k);
+    BloomFilter(unsigned int mer_counts, int k);
     void add(const string s);
     bool contains(const string s);
 

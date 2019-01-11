@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <fstream>
 #include "BloomFilter.h"
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
@@ -37,20 +38,23 @@ bool Tests::custom_test_bloom_implementation() {
     return true;
 }
 
-bool Tests::create_test_bloom_implementation(vector<string> &kmers, int k) {
-    BloomFilter bf = BloomFilter(kmers, k);
+bool Tests::create_test_bloom_implementation(string inputPath, int k) {
+    BloomFilter bf = BloomFilter(100, k);
 
-    for (string s : kmers) {
-        bf.add(s);
-    }
+    ifstream in(inputPath);
 
-    // NOTE test that there are no false negatives
-    for (string s : kmers) {
-        bool contains = bf.contains(s);
-        if (!contains) {
-            printf("> ERROR\n");
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+          bf.add(line);
+          bool contains = bf.contains(line);
+          if (!contains) {
+              printf("> ERROR\n");
+          }
         }
     }
+
+    in.close();
 
     bool contains;
     // NOTE in bloom filter data structure false positives are possible, but false negatives should NEVER happen
@@ -63,8 +67,8 @@ bool Tests::create_test_bloom_implementation(vector<string> &kmers, int k) {
     return true;
 }
 
-bool Tests::create_test_de_bruijn_graph(vector<string> kmers, int k) {
-    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
+bool Tests::create_test_de_bruijn_graph(string inputPath, int k) {
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, 1, k);
     return true;
 }
 
@@ -76,12 +80,12 @@ bool Tests::create_kmer_extensions_test() {
     return true;
 }
 
-void Tests::run_all_tests(vector<string> &kmers, int k) {
+void Tests::run_all_tests(string inputPath, int k) {
     custom_test_bloom_implementation();
 
-    create_test_bloom_implementation(kmers, k);
+    create_test_bloom_implementation(inputPath, k);
 
-    create_test_de_bruijn_graph(kmers, k);
+    create_test_de_bruijn_graph(inputPath, k);
 
     create_kmer_extensions_test();
 }

@@ -8,18 +8,18 @@ using namespace std;
 
 class ExactDeBruijnGraph {
 public:
-    ExactDeBruijnGraph(vector<string> &kmers, int k);
+    ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k);
 
-    void traverse(vector<string> kmers, string outputPath, int maxBreadth, int maxDepth);
+    void traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
 
 private:
     int k;
     BloomFilter bloomFilter;
     set<string> criticalFP;
 
-    void initializeBloomFilter(vector<string> &kmers);
+    void initializeBloomFilter(string inputPath);
 
-    void findCriticalFP(vector<string> &kmers);
+    void findCriticalFP(string inputPath);
 
     set<string> findP(set<string> &S);
 

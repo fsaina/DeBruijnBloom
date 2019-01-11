@@ -7,9 +7,9 @@ using namespace std;
 
 BloomFilter::BloomFilter(int filterSize, int numHashes) : bits(filterSize), numHashes(numHashes) {}
 
-BloomFilter::BloomFilter(vector<string> &kmers, int k) {
-    int filterSize = calculate_filter_size((int) kmers.size(), k);
-    int numHashFunctions = calculate_number_of_hash_functions(filterSize, (int) kmers.size());
+BloomFilter::BloomFilter(unsigned int mer_counts, int k) {
+    int filterSize = calculate_filter_size(mer_counts, k);
+    int numHashFunctions = calculate_number_of_hash_functions(filterSize,mer_counts);
 
     // adjust filter size
     while (filterSize % numHashFunctions != 0) {

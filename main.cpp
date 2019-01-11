@@ -10,21 +10,19 @@
 
 using namespace std;
 
-vector<string> read_file_in_vector(string inputPath){
-    vector<string> mers;
-
+int count_mers(string inputPath){
     ifstream in(inputPath);
-
+    unsigned int counter = 0;
     string line;
     while(getline(in, line)) {
         // ignore lines starting with '>'
         if (line.find(">") != 0) {
-           mers.push_back(line);
+           counter++;
         }
     }
 
     in.close();
-    return mers;
+    return counter;
 }
 
 int main(int argc, char *argv[]) {
@@ -77,9 +75,10 @@ int main(int argc, char *argv[]) {
     system(command.c_str());
 
     // read the file and load only the k-mers (not their counts)
-    vector<string> kmers = read_file_in_vector(tmpDir + '/' + jellyfishTmpFileName);
+    inputPath = tmpDir + '/' + jellyfishTmpFileName;
+    unsigned int countMers = count_mers(inputPath);
 
-    cout<< "Number of kmers: " << kmers.size()<< endl;
+    cout<< "Number of kmers: " << countMers<< endl;
 
     command = "rm -rf " + outputPath;
     system(command.c_str());
@@ -87,8 +86,8 @@ int main(int argc, char *argv[]) {
     command = "mkdir " + outputPath;
     system(command.c_str());
 
-    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
-    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, countMers, k);
+    graph.traverse(inputPath, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
 
 //    Tests::run_all_tests(kmers, k);
 
