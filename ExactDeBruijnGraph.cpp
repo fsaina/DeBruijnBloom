@@ -10,6 +10,7 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts
     findCriticalFP(inputPath);
 }
 
+//  TODO add support for reverse complemnts later if have enough RAM
 void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
 
@@ -21,12 +22,11 @@ void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
            bloomFilter.add(line);
         }
     }
-//        bloomFilter.add(KmerUtil::reverseComplement(kmer)); TODO add support for reverse complemnts later if have enough RAM
 
     in.close();
 }
 
-// TODO kmers should be loaded from file for the sake of RAM size as described in algorithm, SEQUENTIALLY
+
 // TODO add the reverse complements too if have enough RAM
 void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
@@ -56,11 +56,13 @@ void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     }
 }
 
+/*
+ * For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
+ * says that they are part of graph. I.e. set P is set that contains true positives and false positives.
+ */
 set<string> ExactDeBruijnGraph::findP(set<string> &S) {
     set<string> P;
 
-    // For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
-    // says that they are part of graph. I.e. set P is set that contains true positives and false positives.
     for (string s : S) {
         vector<string> E = KmerUtil::generateExtensions(s);
         for (string e : E) {
