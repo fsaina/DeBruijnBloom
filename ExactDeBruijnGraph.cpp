@@ -173,7 +173,9 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
 
     ofstream output;
     output.open(outputPath);
+    int outputIndex = 0;
     for (string contig : contigs) {
+        output << ">" << outputIndex++ << "__len__" << contig.size() << endl;
         output << contig << endl;
     }
     output.close();
