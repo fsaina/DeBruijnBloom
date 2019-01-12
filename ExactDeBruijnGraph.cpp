@@ -10,7 +10,6 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts
     findCriticalFP(inputPath);
 }
 
-//  TODO add support for reverse complemnts later if have enough RAM
 void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
 
@@ -27,7 +26,6 @@ void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
 }
 
 
-// TODO add the reverse complements too if have enough RAM
 void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
 
@@ -70,14 +68,6 @@ set<string> ExactDeBruijnGraph::findP(set<string> &S) {
                 P.insert(e);
             }
         }
-
-//        TODO reverse complementation
-//        vector<string> rcE = KmerUtil::generateExtensions(KmerUtil::reverseComplement(s));
-//        for (string e : rcE) {
-//            if (bloomFilter.contains(e)) {
-//                P.insert(e);
-//            }
-//        }
     }
 
     return P;
