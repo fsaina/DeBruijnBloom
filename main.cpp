@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
     // Count all k-mers https://github.com/gmarcais/Jellyfish/tree/master/doc
     command = jellyfishBinPath + " count -m " + to_string(k)
-              + " -s 100M -t 4 -L " + to_string(minAbundance) // TODO maybe return '-C' flag
+              + " -s 100M -t 4 -L " + to_string(minAbundance)
               + " " + inputPath
               + " -o " + tmpDir + '/' + defaultJellyfishOutput;
     system(command.c_str());
@@ -85,8 +85,8 @@ int main(int argc, char *argv[]) {
     command = "mkdir " + outputPath;
     system(command.c_str());
 
-    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
-    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, kmers.size(), k);
+    graph.simple_traverse(inputPath, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
 
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;

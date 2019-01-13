@@ -8,72 +8,55 @@
 /*
  * Class constructor that initializes bloom filter and finds critical false positives
  */
-ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), bloomFilter((int) kmers.size(), k) {
-    initializeBloomFilter(kmers);
-    findCriticalFP(kmers);
+ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k) : k(k), bloomFilter(mer_counts, k) {
+    initializeBloomFilter(inputPath);
+    findCriticalFP(inputPath);
 }
 
-/*
- * Function that adds all kmers to bloom filter
- */
-void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
+void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
 
+    unordered_set<string> kmers = loadKmersFromFile(inputPath);
+
     for (string kmer : kmers) {
-          bloomFilter.add(kmer);
-          bloomFilter.add(KmerUtil::reverseComplement(kmer));
+        bloomFilter.add(kmer);
     }
 }
 
 /*
  * Function for computation of critical false positives which is formally defined as cFP = P\S
  */
-void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
+void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
 
+    // Create set S, set of all kmers that are in graph
+    // TODO try to make sequential read from algorithm in paper, but dont use reverse complements
+    unordered_set<string> S = loadKmersFromFile(inputPath);
+
     // Find set P. Set P is set E filtered with Bloom filter. Where E is set of extensions of S(one node extensions).
-    vector<string> P = findP(kmers);
+    unordered_set<string> P = findP(S);
 
-    int k = 0;
-    while(k < kmers.size()) {
-        unordered_set<string> Pi;
-        vector<string> Dn;
-        while (Pi.size() < M && k != kmers.size()) {
-            Pi.insert(kmers[k]);
-            k++;
+    // Set of critical false positives is gained as P \ S.
+    for (string p : P) {
+        // if S does not contain p
+        if (S.find(p) == S.end()) {
+            criticalFP.insert(p);
         }
-
-        for (int i = 0; i != P.size(); ++i) {
-            if (Pi.count(get_lesser(P[i])) == 0) {
-                Dn.push_back(get_lesser(P[i]));
-            }
-        }
-        P = Dn;
     }
-    unordered_set<string> d(P.begin(), P.end());
-    criticalFP = d;
-}
-
-/*
- * Function that returns canonically lesser string between s and reverseComplement of s
- */
-string ExactDeBruijnGraph::get_lesser(string s) {
-    string s2 = KmerUtil::reverseComplement(s);
-    return s < s2 ? s : s2;
 }
 
 /*
  * For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
  * says that they are part of graph. I.e. set P is set that contains true positives and false positives.
  */
-vector<string> ExactDeBruijnGraph::findP(vector<string> &S) {
-    vector<string> P;
+unordered_set<string> ExactDeBruijnGraph::findP(unordered_set<string> &S) {
+    unordered_set<string> P;
 
     for (string s : S) {
         vector<string> E = KmerUtil::generateExtensions(s);
         for (string e : E) {
             if (bloomFilter.contains(e)) {
-                P.push_back(get_lesser(e));
+                P.insert(e);
             }
         }
     }
@@ -94,30 +77,38 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
  * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
  * be saved as an argument.
  */
-void ExactDeBruijnGraph::traverse(vector<string> &kmers, string outputPath, int maxBreadth, int maxDepth) {
+void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
 
     // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
-    set<string> startingKmers;
-    for (string kmer : kmers) {
-        vector<string> leftExtensions = KmerUtil::generateLeftExtensions(kmer);
+    unordered_set<string> startingKmers;
+    ifstream in(inputPath);
 
-        int inboundCount = 0;
-        for (string e : leftExtensions) {
-            if (isPartOfDeBruijnGraph(e)) {
-                inboundCount++;
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+            vector<string> leftExtensions = KmerUtil::generateLeftExtensions(line);
+
+            int inboundCount = 0;
+            for (string e : leftExtensions) {
+                if (isPartOfDeBruijnGraph(e)) {
+                    inboundCount++;
+                }
+            }
+            if (inboundCount == 0) {
+                startingKmers.insert(line);
             }
         }
-        if (inboundCount == 0) {
-            startingKmers.insert(kmer);
-        }
     }
+
+    in.close();
+
 
     unsigned long startingKmersSize = startingKmers.size();
     int kmerIndex = 1; // just for output tracking
 
-    set<string> contigs; // set of generated contigs
-    set<string> marked; // marking structure, used to avoid already seen nodes
+    unordered_set<string> contigs; // set of generated contigs
+    unordered_set<string> marked; // marking structure, used to avoid already seen nodes
     for (string start : startingKmers) {
         cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
         list<string> paths;
@@ -184,4 +175,161 @@ void ExactDeBruijnGraph::traverse(vector<string> &kmers, string outputPath, int 
         output << contig << endl;
     }
     output.close();
+}
+
+
+void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
+    cout << "Start traversal..." << endl;
+
+    // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
+    unordered_set<string> startingKmers;
+    ifstream in(inputPath);
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+            vector<string> leftExtensions = KmerUtil::generateLeftExtensions(line);
+
+            int inboundCount = 0;
+            for (string e : leftExtensions) {
+                if (isPartOfDeBruijnGraph(e)) {
+                    inboundCount++;
+                }
+            }
+            if (inboundCount == 0) {
+                startingKmers.insert(line);
+            }
+        }
+    }
+
+    in.close();
+
+
+    unsigned long startingKmersSize = startingKmers.size();
+    int kmerIndex = 1; // just for output tracking
+
+    unordered_set<string> contigs; // set of generated contigs
+    unordered_set<string> marked; // marking structure, used to avoid already seen nodes
+    for (string start : startingKmers) {
+        cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
+        list<string> paths;
+        paths.push_back(start); // add starting kmer as first path to search
+
+        int depth = 0; // depth is counted in nodes
+        while (depth < maxDepth) {
+            list<string> pathsToAdd;
+            for (string& path : paths) {
+                // ignore paths for which search already stopped
+                if (path.size() - k < depth) continue;
+
+                string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
+                marked.insert(lastKmer);
+
+                // find neighbours of last kmer in observing path and filter them(check if are part of graph)
+                vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
+                vector<string> validExtensions;
+                for (string e : extensions) {
+                    if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
+                        validExtensions.push_back(e);
+                    }
+                }
+
+                if (validExtensions.empty()) continue;
+
+                // prolong path with new neighbour nodes
+                string pathClone(path);
+                unsigned long extensionsSize = validExtensions.size();
+                for (int i = 0; i < extensionsSize; ++i) {
+                    char &lastChar = validExtensions[i].back();
+                    if (i == 0) { // to observing path only add last char of next node
+                        path.push_back(lastChar);
+                    } else { // if there is more than one valid next node duplicate the current path and branch the search
+                        string newPath(pathClone);
+                        newPath.push_back(lastChar);
+                        pathsToAdd.push_back(newPath);
+                    }
+                }
+            }
+
+            for (string p : pathsToAdd) {
+                if (paths.size() >= maxBreadth)
+                    break;
+                paths.push_back(p);
+            }
+
+            depth++;
+        }
+
+        for (string p : paths) {
+            // contigs shorter that 2k+1 characters are ignored
+            if (p.length() >= 2*k + 1) {
+                contigs.insert(p);
+            }
+        }
+    }
+
+    ofstream output;
+    output.open(outputPath);
+    int outputIndex = 0;
+    for (string contig : contigs) {
+        output << ">" << outputIndex++ << "__len__" << contig.size() << endl;
+        output << contig << endl;
+    }
+    output.close();
+}
+
+/*
+ * Loads kmers from file into and unordered set.
+ */
+unordered_set<string> ExactDeBruijnGraph::loadKmersFromFile(string path) {
+    ifstream in(path);
+
+    unordered_set<string> S;
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+            S.insert(line);
+        }
+    }
+
+    in.close();
+
+    return S;
+}
+
+/*
+ * Checks if given kmer is simple, i.e. has at most one inbound and one outbound edge.
+ */
+bool ExactDeBruijnGraph::isSimpleNode(string kmer) {
+    if (countEdgesLeft(kmer) > 1)
+        return false;
+    if (countEdgesRight(kmer) > 1)
+        return false;
+    return true;
+}
+
+/*
+ * Count number of possible inbound edges.
+ */
+int ExactDeBruijnGraph::countEdgesLeft(string kmer) {
+    vector<string> extensions = KmerUtil::generateLeftExtensions(kmer);
+    int count = 0;
+    for (string extension : extensions) {
+        if (isPartOfDeBruijnGraph(extension))
+            count++;
+    }
+    return count;
+}
+
+/*
+ * Count number of possible outbound edges.
+ */
+int ExactDeBruijnGraph::countEdgesRight(string kmer) {
+    vector<string> extensions = KmerUtil::generateRightExtensions(kmer);
+    int count = 0;
+    for (string extension : extensions) {
+        if (isPartOfDeBruijnGraph(extension))
+            count++;
+    }
+    return count;
 }
