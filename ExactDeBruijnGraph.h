@@ -3,6 +3,7 @@
 
 #include <set>
 #include <vector>
+#include <unordered_set>
 #include "BloomFilter.h"
 
 using namespace std;
@@ -16,15 +17,18 @@ public:
 private:
     int k;
     BloomFilter bloomFilter;
-    set<string> criticalFP;
+    unordered_set<string> criticalFP;
+    const int M = 100000;
 
     void initializeBloomFilter(vector<string> &kmers);
 
     void findCriticalFP(vector<string> &kmers);
 
-    set<string> findP(set<string> &S);
+    vector<string> findP(vector<string> &S);
 
     bool isPartOfDeBruijnGraph(string kmer);
+
+    string get_lesser(string s);
 };
 
 #endif //DEBRUIJNBLOOM_EXACTDEBRUIJNGRAPH_H

@@ -23,34 +23,46 @@ void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
 void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     cout << "Finding critical FP set..." << endl;
 
-    // Create set S, set of all kmers that are in graph
-    set<string> S;
-
-
     // Find set P. Set P is set E filtered with Bloom filter. Where E is set of extensions of S(one node extensions).
-    set<string> P = findP(S);
+    vector<string> P = findP(kmers);
 
-    // Set of critical false positives is gained as P \ S.
-    for (string p : P) {
-        // if S does not contain p
-        if (S.find(p) == S.end()) {
-            criticalFP.insert(p);
+    int k = 0;
+    while(k < kmers.size()) {
+        unordered_set<string> Pi;
+        vector<string> Dn;
+        while (Pi.size() < M && k != kmers.size()) {
+            Pi.insert(kmers[k]);
+            k++;
         }
+
+        for (int i = 0; i != P.size(); ++i) {
+            if (Pi.count(get_lesser(P[i])) == 0) {
+                Dn.push_back(get_lesser(P[i]));
+            }
+        }
+        P = Dn;
     }
+    unordered_set<string> d(P.begin(), P.end());
+    criticalFP = d;
+}
+
+string ExactDeBruijnGraph::get_lesser(string s) {
+    string s2 = KmerUtil::reverseComplement(s);
+    return s < s2 ? s : s2;
 }
 
 /*
  * For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
  * says that they are part of graph. I.e. set P is set that contains true positives and false positives.
  */
-set<string> ExactDeBruijnGraph::findP(set<string> &S) {
-    set<string> P;
+vector<string> ExactDeBruijnGraph::findP(vector<string> &S) {
+    vector<string> P;
 
     for (string s : S) {
         vector<string> E = KmerUtil::generateExtensions(s);
         for (string e : E) {
             if (bloomFilter.contains(e)) {
-                P.insert(e);
+                P.push_back(get_lesser(e));
             }
         }
     }
@@ -66,6 +78,11 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
     return bloomFilter.contains(kmer) && criticalFP.count(kmer) == 0;
 }
 
+/*
+ * Function for graph traversal. It starts from a solid k-mer and, using Bloom filter and cFP structure, looks for
+ * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
+ * be saved as an argument.
+ */
 void ExactDeBruijnGraph::traverse(vector<string> &kmers, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
 
