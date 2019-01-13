@@ -14,6 +14,8 @@ public:
 
     void simple_traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
 
+    void traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
+
 private:
     int k;
     BloomFilter bloomFilter;
@@ -24,11 +26,11 @@ private:
 
     void findCriticalFP(string inputPath);
 
-    set<string> findP(set<string> &S);
+    unordered_set<string> findP(unordered_set<string> &S);
 
     bool isPartOfDeBruijnGraph(string kmer);
 
-    string get_lesser(string s);
+    unordered_set<string> loadKmersFromFile(string path);
 };
 
 #endif //DEBRUIJNBLOOM_EXACTDEBRUIJNGRAPH_H
