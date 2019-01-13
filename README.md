@@ -4,11 +4,15 @@ Bioinformatics course projects (https://www.fer.unizg.hr/en/course/bio)
 Replication of paper:
 Space-efficient and exact de Bruijn graph representation based on a Bloom filter ( https://almob.biomedcentral.com/articles/10.1186/1748-7188-8-22 )
 
-### Setup project:
-1. Clone this repo
-2. Download or compile Jellyfish executable version 2.x.x ( https://github.com/gmarcais/Jellyfish/releases ) into project root directory as 'jellyfish'
+### Setup project
+Run `sh ./INSTALL.sh` to setup the project. The script will:
+1. Create ./bin directory
+2. Download the Jellyfish executable (version 2.2.10 for Linux) into ./bin directory
 3. Compile the project with `g++ -std=c++14 main.cpp BloomFilter.cpp ExactDeBruijnGraph.cpp KmerUtil.cpp MurmurHash3.cpp measures.cpp -o ./bin/DeBrujinBloom`
-4. Run it with `./bin/DeBrujinBloom -k 21 --minAbundance 3 --maxBreadth 20 --maxDepth 500 --input data/ecoli/ecoli.fasta`
+
+### Run project
+Execution example: `./bin/DeBrujinBloom -k 21 --minAbundance 3 --maxBreadth 20 --maxDepth 500 --input data/ecoli/ecoli.fasta`
+For more information run `./bin/DeBrujinBloom --help`
 
 ### Data
 The E.Coli genome (data/ecoli.fasta) was taken from http://bacteria.ensembl.org/Escherichia_coli_14a/Info/Index/
