@@ -9,19 +9,19 @@
 
 using namespace std;
 
-int count_mers(string inputPath){
+vector<string> count_mers(string inputPath){
     ifstream in(inputPath);
-    unsigned int counter = 0;
+    vector<string> mers;
+
     string line;
     while(getline(in, line)) {
-        // ignore lines starting with '>'
         if (line.find(">") != 0) {
-           counter++;
+           mers.push_back(line);
         }
     }
 
     in.close();
-    return counter;
+    return mers;
 }
 
 int main(int argc, char *argv[]) {
@@ -75,9 +75,9 @@ int main(int argc, char *argv[]) {
 
     // read the file and load only the k-mers (not their counts)
     inputPath = tmpDir + '/' + jellyfishTmpFileName;
-    unsigned int countMers = count_mers(inputPath);
+    vector<string> kmers = count_mers(inputPath);
 
-    cout<< "Number of kmers: " << countMers<< endl;
+    cout<< "Number of kmers: " << kmers.size() << endl;
 
     command = "rm -rf " + outputPath;
     system(command.c_str());
@@ -85,8 +85,8 @@ int main(int argc, char *argv[]) {
     command = "mkdir " + outputPath;
     system(command.c_str());
 
-    ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, countMers, k);
-    graph.traverse(inputPath, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
+    ExactDeBruijnGraph graph = ExactDeBruijnGraph(kmers, k);
+    graph.traverse(kmers, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
 
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;

@@ -2,24 +2,25 @@
 #define DEBRUIJNBLOOM_EXACTDEBRUIJNGRAPH_H
 
 #include <set>
+#include <vector>
 #include "BloomFilter.h"
 
 using namespace std;
 
 class ExactDeBruijnGraph {
 public:
-    ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k);
+    ExactDeBruijnGraph(vector<string> &kmers, int k);
 
-    void traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
+    void traverse(vector<string> &kmers, string outputPath, int maxBreadth, int maxDepth);
 
 private:
     int k;
     BloomFilter bloomFilter;
     set<string> criticalFP;
 
-    void initializeBloomFilter(string inputPath);
+    void initializeBloomFilter(vector<string> &kmers);
 
-    void findCriticalFP(string inputPath);
+    void findCriticalFP(vector<string> &kmers);
 
     set<string> findP(set<string> &S);
 
