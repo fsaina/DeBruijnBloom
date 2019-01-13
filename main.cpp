@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
     string fullOutputPath = outputPath + "/" + defaultProgramOutput;
 
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, kmers.size(), k);
-    graph.simple_traverse(inputPath, fullOutputPath, maxBreadth, maxDepth);
+    graph.traverse(inputPath, fullOutputPath, maxBreadth, maxDepth);
 
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;

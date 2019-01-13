@@ -216,54 +216,91 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
         paths.push_back(start); // add starting kmer as first path to search
 
         int depth = 0; // depth is counted in nodes
-        while (depth < maxDepth) {
+        while (paths.size() > 0) {
+            if (depth >= maxDepth) {
+                contigs.insert(paths.back());
+                break;
+            }
+
             list<string> pathsToAdd;
-            for (string& path : paths) {
-                // ignore paths for which search already stopped
-                if (path.size() - k < depth) continue;
+            list<string> pathsToRemove;
 
-                string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
-                marked.insert(lastKmer);
+            int breadth = paths.size();
+            if (breadth == 1) {
+                for (string& path : paths) {
+                    string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
+                    marked.insert(lastKmer);
 
-                // find neighbours of last kmer in observing path and filter them(check if are part of graph)
-                vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
-                vector<string> validExtensions;
-                for (string e : extensions) {
-                    if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
-                        validExtensions.push_back(e);
+                    // find neighbours of last kmer in observing path and filter them(check if are part of graph)
+                    vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
+                    vector<string> validExtensions;
+                    for (string e : extensions) {
+                        if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
+                            validExtensions.push_back(e);
+                        }
                     }
-                }
 
-                if (validExtensions.empty()) continue;
-
-                // prolong path with new neighbour nodes
-                string pathClone(path);
-                unsigned long extensionsSize = validExtensions.size();
-                for (int i = 0; i < extensionsSize; ++i) {
-                    char &lastChar = validExtensions[i].back();
-                    if (i == 0) { // to observing path only add last char of next node
+                    unsigned long validExtensionsCount = validExtensions.size();
+                    if (validExtensionsCount == 0) {
+                        contigs.insert(path);
+                        pathsToRemove.push_back(path);
+                    } else if (validExtensionsCount == 1) {
+                        char &lastChar = validExtensions[0].back();
                         path.push_back(lastChar);
-                    } else { // if there is more than one valid next node duplicate the current path and branch the search
-                        string newPath(pathClone);
-                        newPath.push_back(lastChar);
-                        pathsToAdd.push_back(newPath);
+                    } else {
+                        contigs.insert(path);
+                        pathsToRemove.push_back(path);
+                        for(string validE : validExtensions) {
+                            pathsToAdd.push_back(validE);
+                        }
+                        depth++;
                     }
                 }
+            } else {
+                depth++;
+                for (string& path : paths) {
+                    string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
+                    marked.insert(lastKmer);
+
+                    // find neighbours of last kmer in observing path and filter them(check if are part of graph)
+                    vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
+                    vector<string> validExtensions;
+                    for (string e : extensions) {
+                        if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
+                            validExtensions.push_back(e);
+                        }
+                    }
+
+                    string pathClone(path);
+                    unsigned long validExtensionsCount = validExtensions.size();
+                    if (validExtensionsCount == 0) {
+                        pathsToRemove.push_back(path);
+                    } else if (validExtensionsCount == 1) {
+                        char &lastChar = validExtensions[0].back();
+                        path.push_back(lastChar);
+                    } else {
+                        for(string validE : validExtensions) {
+                            char &lastChar = validE.back();
+                            string newPath(pathClone);
+                            newPath.push_back(lastChar);
+                            pathsToAdd.push_back(newPath);
+                        }
+                    }
+                }
+            }
+
+            for (string p : pathsToRemove) {
+                paths.remove(p);
+            }
+
+            if (paths.size() == 1) {
+                depth = 0;
             }
 
             for (string p : pathsToAdd) {
                 if (paths.size() >= maxBreadth)
                     break;
                 paths.push_back(p);
-            }
-
-            depth++;
-        }
-
-        for (string p : paths) {
-            // contigs shorter that 2k+1 characters are ignored
-            if (p.length() >= 2*k + 1) {
-                contigs.insert(p);
             }
         }
     }
@@ -272,6 +309,10 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
     output.open(outputPath);
     int outputIndex = 0;
     for (string contig : contigs) {
+        // contigs shorter that 2k+1 characters are ignored
+        if (contig.length() < 2*k + 1) {
+            continue;
+        }
         output << ">" << outputIndex++ << "__len__" << contig.size() << endl;
         output << contig << endl;
     }
