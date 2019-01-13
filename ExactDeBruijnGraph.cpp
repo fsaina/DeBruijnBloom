@@ -5,6 +5,9 @@
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
+/*
+ * Class constructor that initializes bloom filter and finds critical false positives
+ */
 ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k) : k(k), bloomFilter(mer_counts, k) {
     initializeBloomFilter(inputPath);
     findCriticalFP(inputPath);
@@ -20,7 +23,9 @@ void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     }
 }
 
-
+/*
+ * Function for computation of critical false positives which is formally defined as cFP = P\S
+ */
 void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
 

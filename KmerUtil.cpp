@@ -1,5 +1,8 @@
 #include "KmerUtil.h"
 
+/*
+ * Function that returns reverse complement of a k-mer
+ */
 const string KmerUtil::reverseComplement(string kmer) {
     unsigned long length = kmer.size();
 
@@ -12,6 +15,9 @@ const string KmerUtil::reverseComplement(string kmer) {
     return kmer;
 }
 
+/*
+ * Function that returns nucleobase complement
+ */
 char KmerUtil::complement(char c) {
     switch (c) {
         case 'A':
@@ -27,6 +33,9 @@ char KmerUtil::complement(char c) {
     }
 }
 
+/*
+ * Function that generates left and right neighbours of a k-mer
+ */
 vector<string> KmerUtil::generateExtensions(string kmer) {
     vector<string> E;
 
@@ -41,6 +50,9 @@ vector<string> KmerUtil::generateExtensions(string kmer) {
     return E;
 }
 
+/*
+ * Function that generates left neighbours of a k-mer
+ */
 vector<string> KmerUtil::generateLeftExtensions(string kmer) {
     vector<string> E;
 
@@ -52,6 +64,9 @@ vector<string> KmerUtil::generateLeftExtensions(string kmer) {
     return E;
 }
 
+/*
+ * Function that generates right neighbours of a k-mer
+ */
 vector<string> KmerUtil::generateRightExtensions(string kmer) {
     vector<string> E;
 
@@ -62,6 +77,9 @@ vector<string> KmerUtil::generateRightExtensions(string kmer) {
     return E;
 }
 
+/*
+ * Function that takes first size - k characters
+ */
 string KmerUtil::extractLastKmerInSequence(string sequence, int k) {
     return sequence.substr(sequence.size() - k);
 }

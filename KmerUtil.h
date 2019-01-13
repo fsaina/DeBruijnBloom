@@ -8,6 +8,9 @@ using namespace std;
 
 namespace KmerUtil {
 
+    /*
+     * Nucleobases
+     */
     const vector<string> BASES = { "A", "T", "C", "G" };
 
     const string reverseComplement(string kmer);
