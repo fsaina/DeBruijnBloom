@@ -26,6 +26,22 @@ To create the synthetic genome sequences(E.Coli):
 2. For creating synthetic sequences of length x, with error y, run
    `./bin/wgsim -1 x -d0 -S11 -e0 -r y ./data/Escherichia_coli.fa ./data/read-x-y.fq /dev/null`
 
+### Testing
+For testing purposes we used 'blastn' and 'valgrind' tools, and made our implementation of N50 measure(see in next section).
+
+To use blastn(used to check matching of generated sequences and original data):
+1. Download and compile blastn and put it in bin/ directory
+2. Generate some outputs in fasta format
+3. Run `./bin/blastn -query path-to-generated-data.fasta -subject path-to-original-sequence.fasta -out results.txt`
+
+To use Valgrind tool(used to get a memory usage report):
+1. Download and install Valgrind
+2. Run `valgrind ./bin/DeBrujinBloom program_arguments`
+
+We downloaded the original implementation of this paper at http://minia.genouest.org/, so we can test their performances:
+1. Download and compile minia, move it to /bin directory
+2. Run `./bin/minia path-to-fasta-file k min-abundance genome-length output-file-name`
+
 ### Measure
 To calculate the N50 measure from the execution output file, either:
 1. Add a "-n 1" flag when calling `./bin/DeBrujinBloom`
