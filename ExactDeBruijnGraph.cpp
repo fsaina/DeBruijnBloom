@@ -5,11 +5,17 @@
 #include "ExactDeBruijnGraph.h"
 #include "KmerUtil.h"
 
+/*
+ * Class constructor that initializes bloom filter and finds critical false positives
+ */
 ExactDeBruijnGraph::ExactDeBruijnGraph(vector<string> &kmers, int k) : k(k), bloomFilter((int) kmers.size(), k) {
     initializeBloomFilter(kmers);
     findCriticalFP(kmers);
 }
 
+/*
+ * Function that adds all kmers to bloom filter
+ */
 void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
     cout << "Creating Bloom filter..." << endl;
 
@@ -19,7 +25,9 @@ void ExactDeBruijnGraph::initializeBloomFilter(vector<string> &kmers) {
     }
 }
 
-
+/*
+ * Function for computation of critical false positives which is formally defined as cFP = P\S
+ */
 void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     cout << "Finding critical FP set..." << endl;
 
@@ -46,6 +54,9 @@ void ExactDeBruijnGraph::findCriticalFP(vector<string> &kmers) {
     criticalFP = d;
 }
 
+/*
+ * Function that returns canonically lesser string between s and reverseComplement of s
+ */
 string ExactDeBruijnGraph::get_lesser(string s) {
     string s2 = KmerUtil::reverseComplement(s);
     return s < s2 ? s : s2;
