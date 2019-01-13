@@ -7,7 +7,7 @@ Space-efficient and exact de Bruijn graph representation based on a Bloom filter
 ### Setup project:
 1. Clone this repo
 2. Download or compile Jellyfish executable version 2.x.x ( https://github.com/gmarcais/Jellyfish/releases ) into project root directory as 'jellyfish'
-3. Compile the project with `g++ -std=c++14 main.cpp BloomFilter.cpp ExactDeBruijnGraph.cpp KmerUtil.cpp MurmurHash3.cpp -o ./bin/DeBrujinBloom`
+3. Compile the project with `g++ -std=c++14 main.cpp BloomFilter.cpp ExactDeBruijnGraph.cpp KmerUtil.cpp MurmurHash3.cpp measures.cpp -o ./bin/DeBrujinBloom`
 4. Run it with `./bin/DeBrujinBloom -k 21 --minAbundance 3 --maxBreadth 20 --maxDepth 500 --input data/ecoli/ecoli.fasta`
 
 ### Data
@@ -21,5 +21,9 @@ To create the synthetic genome sequences(E.Coli):
 1. Compile wgsim tool `gcc -g -O2 -Wall -o ./bin/wgsim ./wgsim/wgsim.c -lz -lm`
 2. For creating synthetic sequences of length x, with error y, run
    `./bin/wgsim -1 x -d0 -S11 -e0 -r y ./data/Escherichia_coli.fa ./data/read-x-y.fq /dev/null`
+
+### Measure
+To calculate the N50 measure from the execution output file, either:
+1. Add a "-n 1" flag when calling `./bin/DeBrujinBloom`
 
 This project is licensed under the terms of the MIT license.

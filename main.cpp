@@ -3,10 +3,10 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <map>
 
 #include "cmdline.h"
 #include "ExactDeBruijnGraph.h"
+#include "measures.h"
 
 
 using namespace std;
@@ -31,61 +31,6 @@ vector<string> read_mers(string inputPath){
 }
 
 /*
- * Read a fasta file and retrieve the sequence counts (lengths) assigned to
- * each sequence
- */
-vector<int> read_seq_counts(string inputPath){
-    ifstream in(inputPath);
-
-    vector<int> counts;
-    string delimiter = "__len__";
-
-    string line;
-    while(getline(in, line)) {
-        if (line.find(">") == 0) {
-            string token = line.substr(line.find(delimiter) + delimiter.size());
-            counts.push_back(stoi(token));
-        }
-    }
-
-    in.close();
-    return counts;
-}
-
-/*
- * Returns the N50 value of the passed list of numbers.
- *
- * Based on the Broad Institute definition:
- * https://www.broad.harvard.edu/crd/wiki/index.php/N50
- */
-float measure_n50(vector<int> lengths) {
-    map<int, int> freq;
-
-    for (int i : lengths) {
-        freq[i] = freq[i] + 1;
-    }
-
-    vector<int> tmpLengths;
-
-    for (const auto& p : freq) {
-        int key = p.first;
-        int value = p.second;
-
-        for (int i=0; i<value*key; i++) {
-            tmpLengths.push_back(key);
-        }
-    }
-
-    size_t size = tmpLengths.size();
-
-    if (size % 2 == 0) {
-        return (tmpLengths[size / 2 - 1] + tmpLengths[size / 2]) / 2.;
-    } else {
-        return tmpLengths[size / 2];
-    }
-}
-
-/*
  * Entry point of the command line application.
  * For parameters required to run this CLI application please reffer to the
  * proved README.md or run the tool with a --help flag.
@@ -103,6 +48,7 @@ int main(int argc, char *argv[]) {
     p.add<string>("output", 'o', "Path to directory where to write the results of execution", false, "./output");
     p.add<string>("jellyfish", 'j', "Path to jellyfish executable", false, "./bin/jellyfish");
     p.add<string>("tmp", 't', "Path to directory where to write temporary files", false, "./tmp");
+    p.add<bool>("n50", 'n', "Output the N50 measure at the end of execution", false, false);
 
     p.parse_check(argc, argv);
 
@@ -114,6 +60,7 @@ int main(int argc, char *argv[]) {
     string outputPath = p.get<string>("output");
     string jellyfishBinPath = p.get<string>("jellyfish");
     string tmpDir = p.get<string>("tmp");
+    bool outputN50 = p.get<bool>("n50");
 
     string jellyfishTmpFileName = "tmp.fa";
     string defaultJellyfishOutput = "mer_counts.jf";
@@ -160,11 +107,12 @@ int main(int argc, char *argv[]) {
     double time = double(end - start) / CLOCKS_PER_SEC;
     cout << "Time: " << time << " seconds" << endl;
 
-    cout << endl;
-
-    vector<int> lengths = read_seq_counts(fullOutputPath);
-    float n50_measure = measure_n50(lengths);
-    cout << "N50: " << n50_measure << endl;
+    if (outputN50 == true) {
+        cout << endl;
+        vector<int> lengths = measures::read_seq_counts(fullOutputPath);
+        float n50_measure = measures::n50(lengths);
+        cout << "N50: " << n50_measure << endl;
+    }
 
     return 0;
 }
