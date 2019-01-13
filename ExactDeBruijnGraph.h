@@ -31,6 +31,12 @@ private:
     bool isPartOfDeBruijnGraph(string kmer);
 
     unordered_set<string> loadKmersFromFile(string path);
+
+    bool isSimpleNode(string kmer);
+
+    int countEdgesLeft(string kmer);
+
+    int countEdgesRight(string kmer);
 };
 
 #endif //DEBRUIJNBLOOM_EXACTDEBRUIJNGRAPH_H

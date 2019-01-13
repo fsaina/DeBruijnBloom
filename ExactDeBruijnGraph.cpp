@@ -102,8 +102,8 @@ void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, in
     unsigned long startingKmersSize = startingKmers.size();
     int kmerIndex = 1; // just for output tracking
 
-    set<string> contigs; // set of generated contigs
-    set<string> marked; // marking structure, used to avoid already seen nodes
+    unordered_set<string> contigs; // set of generated contigs
+    unordered_set<string> marked; // marking structure, used to avoid already seen nodes
     for (string start : startingKmers) {
         cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
         list<string> paths;
@@ -174,86 +174,108 @@ void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, in
 
 
 void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
-//    cout << "Start traversal..." << endl;
-//
-//    // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
-//    set<string> S = loadKmersFromFile(inputPath);
-//    
-//
-//
-//    unsigned long startingKmersSize = startingKmers.size();
-//    int kmerIndex = 1; // just for output tracking
-//
-//    set<string> contigs; // set of generated contigs
-//    set<string> marked; // marking structure, used to avoid already seen nodes
-//    for (string start : startingKmers) {
-//        cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
-//        list<string> paths;
-//        paths.push_back(start); // add starting kmer as first path to search
-//
-//        int depth = 0; // depth is counted in nodes
-//        while (depth < maxDepth) {
-//            list<string> pathsToAdd;
-//            for (string& path : paths) {
-//                // ignore paths for which search already stopped
-//                if (path.size() - k < depth) continue;
-//
-//                string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
-//                marked.insert(lastKmer);
-//
-//                // find neighbours of last kmer in observing path and filter them(check if are part of graph)
-//                vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
-//                vector<string> validExtensions;
-//                for (string e : extensions) {
-//                    if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
-//                        validExtensions.push_back(e);
-//                    }
-//                }
-//
-//                if (validExtensions.empty()) continue;
-//
-//                // prolong path with new neighbour nodes
-//                string pathClone(path);
-//                unsigned long extensionsSize = validExtensions.size();
-//                for (int i = 0; i < extensionsSize; ++i) {
-//                    char &lastChar = validExtensions[i].back();
-//                    if (i == 0) { // to observing path only add last char of next node
-//                        path.push_back(lastChar);
-//                    } else { // if there is more than one valid next node duplicate the current path and branch the search
-//                        string newPath(pathClone);
-//                        newPath.push_back(lastChar);
-//                        pathsToAdd.push_back(newPath);
-//                    }
-//                }
-//            }
-//
-//            for (string p : pathsToAdd) {
-//                if (paths.size() >= maxBreadth)
-//                    break;
-//                paths.push_back(p);
-//            }
-//
-//            depth++;
-//        }
-//
-//        for (string p : paths) {
-//            // contigs shorter that 2k+1 characters are ignored
-//            if (p.length() >= 2*k + 1) {
-//                contigs.insert(p);
-//            }
-//        }
-//    }
-//
-//    ofstream output;
-//    output.open(outputPath);
-//    int outputIndex = 0;
-//    for (string contig : contigs) {
-//        output << ">" << outputIndex++ << "__len__" << contig.size() << endl;
-//        output << contig << endl;
-//    }
-//    output.close();
+    cout << "Start traversal..." << endl;
+
+    // Generate a set of starting kmers, i.e. kmers that have zero inbound nodes. They will be starting nodes of contigs.
+    unordered_set<string> startingKmers;
+    ifstream in(inputPath);
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") != 0) {
+            vector<string> leftExtensions = KmerUtil::generateLeftExtensions(line);
+
+            int inboundCount = 0;
+            for (string e : leftExtensions) {
+                if (isPartOfDeBruijnGraph(e)) {
+                    inboundCount++;
+                }
+            }
+            if (inboundCount == 0) {
+                startingKmers.insert(line);
+            }
+        }
+    }
+
+    in.close();
+
+
+    unsigned long startingKmersSize = startingKmers.size();
+    int kmerIndex = 1; // just for output tracking
+
+    unordered_set<string> contigs; // set of generated contigs
+    unordered_set<string> marked; // marking structure, used to avoid already seen nodes
+    for (string start : startingKmers) {
+        cout << "Starting kmer: " << kmerIndex++ << "/" << startingKmersSize << endl;
+        list<string> paths;
+        paths.push_back(start); // add starting kmer as first path to search
+
+        int depth = 0; // depth is counted in nodes
+        while (depth < maxDepth) {
+            list<string> pathsToAdd;
+            for (string& path : paths) {
+                // ignore paths for which search already stopped
+                if (path.size() - k < depth) continue;
+
+                string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
+                marked.insert(lastKmer);
+
+                // find neighbours of last kmer in observing path and filter them(check if are part of graph)
+                vector<string> extensions = KmerUtil::generateRightExtensions(lastKmer);
+                vector<string> validExtensions;
+                for (string e : extensions) {
+                    if (isPartOfDeBruijnGraph(e) && marked.count(e) == 0) {
+                        validExtensions.push_back(e);
+                    }
+                }
+
+                if (validExtensions.empty()) continue;
+
+                // prolong path with new neighbour nodes
+                string pathClone(path);
+                unsigned long extensionsSize = validExtensions.size();
+                for (int i = 0; i < extensionsSize; ++i) {
+                    char &lastChar = validExtensions[i].back();
+                    if (i == 0) { // to observing path only add last char of next node
+                        path.push_back(lastChar);
+                    } else { // if there is more than one valid next node duplicate the current path and branch the search
+                        string newPath(pathClone);
+                        newPath.push_back(lastChar);
+                        pathsToAdd.push_back(newPath);
+                    }
+                }
+            }
+
+            for (string p : pathsToAdd) {
+                if (paths.size() >= maxBreadth)
+                    break;
+                paths.push_back(p);
+            }
+
+            depth++;
+        }
+
+        for (string p : paths) {
+            // contigs shorter that 2k+1 characters are ignored
+            if (p.length() >= 2*k + 1) {
+                contigs.insert(p);
+            }
+        }
+    }
+
+    ofstream output;
+    output.open(outputPath);
+    int outputIndex = 0;
+    for (string contig : contigs) {
+        output << ">" << outputIndex++ << "__len__" << contig.size() << endl;
+        output << contig << endl;
+    }
+    output.close();
 }
 
+/*
+ * Loads kmers from file into and unordered set.
+ */
 unordered_set<string> ExactDeBruijnGraph::loadKmersFromFile(string path) {
     ifstream in(path);
 
@@ -268,4 +290,41 @@ unordered_set<string> ExactDeBruijnGraph::loadKmersFromFile(string path) {
     in.close();
 
     return S;
+}
+
+/*
+ * Checks if given kmer is simple, i.e. has at most one inbound and one outbound edge.
+ */
+bool ExactDeBruijnGraph::isSimpleNode(string kmer) {
+    if (countEdgesLeft(kmer) > 1)
+        return false;
+    if (countEdgesRight(kmer) > 1)
+        return false;
+    return true;
+}
+
+/*
+ * Count number of possible inbound edges.
+ */
+int ExactDeBruijnGraph::countEdgesLeft(string kmer) {
+    vector<string> extensions = KmerUtil::generateLeftExtensions(kmer);
+    int count = 0;
+    for (string extension : extensions) {
+        if (isPartOfDeBruijnGraph(extension))
+            count++;
+    }
+    return count;
+}
+
+/*
+ * Count number of possible outbound edges.
+ */
+int ExactDeBruijnGraph::countEdgesRight(string kmer) {
+    vector<string> extensions = KmerUtil::generateRightExtensions(kmer);
+    int count = 0;
+    for (string extension : extensions) {
+        if (isPartOfDeBruijnGraph(extension))
+            count++;
+    }
+    return count;
 }
