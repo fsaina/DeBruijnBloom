@@ -3,13 +3,19 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <map>
 
 #include "cmdline.h"
 #include "ExactDeBruijnGraph.h"
 
+
 using namespace std;
 
-vector<string> count_mers(string inputPath){
+/*
+ * Read a file containing the kmers. Method skips lines that contain mer
+ * occurrence count.
+ */
+vector<string> read_mers(string inputPath){
     ifstream in(inputPath);
     vector<string> mers;
 
@@ -24,6 +30,66 @@ vector<string> count_mers(string inputPath){
     return mers;
 }
 
+/*
+ * Read a fasta file and retrieve the sequence counts (lengths) assigned to
+ * each sequence
+ */
+vector<int> read_seq_counts(string inputPath){
+    ifstream in(inputPath);
+
+    vector<int> counts;
+    string delimiter = "__len__";
+
+    string line;
+    while(getline(in, line)) {
+        if (line.find(">") == 0) {
+            string token = line.substr(line.find(delimiter) + delimiter.size());
+            counts.push_back(stoi(token));
+        }
+    }
+
+    in.close();
+    return counts;
+}
+
+/*
+ * Returns the N50 value of the passed list of numbers.
+ *
+ * Based on the Broad Institute definition:
+ * https://www.broad.harvard.edu/crd/wiki/index.php/N50
+ */
+float measure_n50(vector<int> lengths) {
+    map<int, int> freq;
+
+    for (int i : lengths) {
+        freq[i] = freq[i] + 1;
+    }
+
+    vector<int> tmpLengths;
+
+    for (const auto& p : freq) {
+        int key = p.first;
+        int value = p.second;
+
+        for (int i=0; i<value*key; i++) {
+            tmpLengths.push_back(key);
+        }
+    }
+
+    size_t size = tmpLengths.size();
+
+    if (size % 2 == 0) {
+        return (tmpLengths[size / 2 - 1] + tmpLengths[size / 2]) / 2.;
+    } else {
+        return tmpLengths[size / 2];
+    }
+}
+
+/*
+ * Entry point of the command line application.
+ * For parameters required to run this CLI application please reffer to the
+ * proved README.md or run the tool with a --help flag.
+ */
 int main(int argc, char *argv[]) {
     clock_t start = clock();
 
@@ -75,7 +141,7 @@ int main(int argc, char *argv[]) {
 
     // read the file and load only the k-mers (not their counts)
     inputPath = tmpDir + '/' + jellyfishTmpFileName;
-    vector<string> kmers = count_mers(inputPath);
+    vector<string> kmers = read_mers(inputPath);
 
     cout<< "Number of kmers: " << kmers.size() << endl;
 
@@ -85,12 +151,20 @@ int main(int argc, char *argv[]) {
     command = "mkdir " + outputPath;
     system(command.c_str());
 
+    string fullOutputPath = outputPath + "/" + defaultProgramOutput;
+
     ExactDeBruijnGraph graph = ExactDeBruijnGraph(inputPath, kmers.size(), k);
-    graph.simple_traverse(inputPath, outputPath + "/" + defaultProgramOutput, maxBreadth, maxDepth);
+    graph.simple_traverse(inputPath, fullOutputPath, maxBreadth, maxDepth);
 
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;
     cout << "Time: " << time << " seconds" << endl;
+
+    cout << endl;
+
+    vector<int> lengths = read_seq_counts(fullOutputPath);
+    float n50_measure = measure_n50(lengths);
+    cout << "N50: " << n50_measure << endl;
 
     return 0;
 }
