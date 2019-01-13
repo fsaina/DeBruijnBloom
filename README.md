@@ -25,5 +25,6 @@ To create the synthetic genome sequences(E.Coli):
 ### Measure
 To calculate the N50 measure from the execution output file, either:
 1. Add a "-n 1" flag when calling `./bin/DeBrujinBloom`
+2. Or run the N50.py python script with `grep "^>" ./output/output.fasta | cut -d "_" -f5 | ./N50.py` (Don't forget to make N50.py executable with `chmod +x`)
 
 This project is licensed under the terms of the MIT license.
