@@ -2,6 +2,7 @@
 #define DEBRUIJNBLOOM_MEASURES_H
 
 #include <vector>
+#include <string>
 
 using namespace std;
 
