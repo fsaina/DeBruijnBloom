@@ -1,31 +1,30 @@
-#Redom rezultati za ecoli, duljine sekv 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000(odvojeni tabulatorom), uz k 21
+### Redom rezultati za ecoli, duljine sekv 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000(odvojeni tabulatorom), uz k 21
 
 
-#Nasa implementacija
+## Nasa implementacija
 
 #Vrijeme(s)
 0.003615    0.006244    0.013416    0.024502    0.0515    0.12621 0.308075  0.490855    1.40614 2.92342
-#Memorija(B)
-72704
+#Memorija - Veličina grafa(bytes)
+910 2030    5453    11256   22554   56539   113449  219163  567560  1135148
 #Pokrivenost(zbroj contiga / ukupna duljina)
 
 #Točnost(prosjek točnosti generiranih contiga, dobiveno iz blastn-a)
 
 #N50
-100
-#Veličina grafa
+100 200 500 1000    2000    5000    10000   5413    42741   86803
 
 
 
-
-#Minia
+## Minia
 
 #Vrijeme
-
-#Memorija
-
+0.010318    0.011018    0.0149441   0.0151548   0.022527    0.0404041   0.0693119   0.144387    0.295048    0.648245
+#Memorija(procjena veličine grafa, bytes)
+608 1216    3083    6167    12356   30881   61783   123567  308918  617857
 #Pokrivenost(zbroj contiga / ukupna duljina)
 
 #Točnost(prosjek točnosti generiranih contiga, dobiveno iz blastn-a)
 
 #N50
+100 200 500 1000    2000    5000    10000   5413    42741   52069
