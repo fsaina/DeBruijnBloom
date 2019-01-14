@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 
+# Given an input list of values, find the median value
 def median(newlist):
     if len(newlist) % 2 == 0:
         medianpos = len(newlist)/2  
@@ -9,6 +10,7 @@ def median(newlist):
         medianpos = len(newlist)/2
         return newlist[medianpos]
 
+# Given an input list of values calculate its N50 value
 def N50(numlist):
     """
     Returns the N50 value of the passed list of numbers. 

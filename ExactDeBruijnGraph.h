@@ -11,11 +11,8 @@ using namespace std;
 class ExactDeBruijnGraph {
 public:
     ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k);
-
     void simple_traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
-
     void traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
-
     unsigned long graphSizeInBytes();
 
 private:
@@ -25,19 +22,12 @@ private:
     const int M = 100000;
 
     void initializeBloomFilter(string inputPath);
-
     void findCriticalFP(string inputPath);
-
     unordered_set<string> findP(unordered_set<string> &S);
-
     bool isPartOfDeBruijnGraph(string kmer);
-
     unordered_set<string> loadKmersFromFile(string path);
-
     bool isSimpleNode(string kmer);
-
     int countEdgesLeft(string kmer);
-
     int countEdgesRight(string kmer);
 };
 

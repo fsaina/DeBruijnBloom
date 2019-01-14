@@ -15,7 +15,8 @@ class BloomFilter {
     int numHashes;
     vector<bool> bits;
 
-public:
+public
+:
     BloomFilter(int size, int numHashes);
     BloomFilter(unsigned int mer_counts, int k);
     void add(const string s);

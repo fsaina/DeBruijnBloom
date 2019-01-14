@@ -6,10 +6,12 @@
 
 using namespace std;
 
+/*
+ * Implementation of measures used to evaluate program output
+ */
 namespace measures {
     float n50(vector<int> lengths);
     vector<int> read_seq_counts(string inputPath);
 };
-
 
 #endif //DEBRUIJNBLOOM_MEASURES_H
