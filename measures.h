@@ -8,6 +8,8 @@ using namespace std;
 
 /*
  * Implementation of measures used to evaluate program output
+ *
+ * Author(s): Marin Vernier
  */
 namespace measures {
     float n50(vector<int> lengths);

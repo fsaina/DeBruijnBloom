@@ -7,6 +7,8 @@
 
 /*
  * Class constructor that initializes bloom filter and finds critical false positives
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
  */
 ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k) : k(k), bloomFilter(mer_counts, k) {
     initializeBloomFilter(inputPath);
@@ -15,6 +17,8 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts
 
 /*
  * Loads kmers from file given in arguments and populates the Bloom filter with them.
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
  */
 void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
@@ -28,6 +32,8 @@ void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
 
 /*
  * Function for computation of critical false positives which is formally defined as cFP = P\S
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
  */
 void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
     cout << "Finding critical FP set..." << endl;
@@ -51,6 +57,8 @@ void ExactDeBruijnGraph::findCriticalFP(string inputPath) {
 /*
  * For each kmer in S, generate extensions(kmers that are neighbours in graph) and add them to P if Bloom filter
  * says that they are part of graph. I.e. set P is set that contains true positives and false positives.
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
  */
 unordered_set<string> ExactDeBruijnGraph::findP(unordered_set<string> &S) {
     unordered_set<string> P;
@@ -70,6 +78,8 @@ unordered_set<string> ExactDeBruijnGraph::findP(unordered_set<string> &S) {
 /*
  * Each query to the Bloom filter is modified such that the yes answer is returned
  * if and only if the Bloom filter answers yes and the element is not in cFP.
+ *
+ * Author(s): Marin Vernier
  */
 bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
     return bloomFilter.contains(kmer) && criticalFP.count(kmer) == 0;
@@ -77,6 +87,8 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
 
 /*
  * Method used to print graph size. Size of Bloom filter + size of cFP structure.
+ *
+ * Author(s): Marin Vernier
  */
 unsigned long ExactDeBruijnGraph::graphSizeInBytes() {
     unsigned long size = 0;
@@ -89,6 +101,8 @@ unsigned long ExactDeBruijnGraph::graphSizeInBytes() {
  * Function for graph traversal. It starts from a solid k-mer and, using Bloom filter and cFP structure, looks for
  * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
  * be saved as an argument.
+ *
+ * Author(s): Marin Vernier
  */
 void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
@@ -194,6 +208,8 @@ void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, in
  * Function for graph traversal. It starts from a solid k-mer and, using Bloom filter and cFP structure, looks for
  * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
  * be saved as an argument.
+ *
+ * Author(s): Marin Vernier
  */
 void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
@@ -347,6 +363,8 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
 
 /*
  * Loads kmers from file into and unordered set.
+ *
+ * Author(s): Marin Kukovačec
  */
 unordered_set<string> ExactDeBruijnGraph::loadKmersFromFile(string path) {
     ifstream in(path);
@@ -366,6 +384,8 @@ unordered_set<string> ExactDeBruijnGraph::loadKmersFromFile(string path) {
 
 /*
  * Checks if given kmer is simple, i.e. has at most one inbound and one outbound edge.
+ *
+ * Author(s): Marin Vernier
  */
 bool ExactDeBruijnGraph::isSimpleNode(string kmer) {
     if (countEdgesLeft(kmer) > 1)
@@ -377,6 +397,8 @@ bool ExactDeBruijnGraph::isSimpleNode(string kmer) {
 
 /*
  * Count number of possible inbound edges.
+ *
+ * Author(s): Marin Vernier
  */
 int ExactDeBruijnGraph::countEdgesLeft(string kmer) {
     vector<string> extensions = KmerUtil::generateLeftExtensions(kmer);
@@ -390,6 +412,8 @@ int ExactDeBruijnGraph::countEdgesLeft(string kmer) {
 
 /*
  * Count number of possible outbound edges.
+ *
+ * Author(s): Marin Vernier
  */
 int ExactDeBruijnGraph::countEdgesRight(string kmer) {
     vector<string> extensions = KmerUtil::generateRightExtensions(kmer);

@@ -14,6 +14,8 @@ using namespace std;
 /*
  * Read a file containing the kmers. Method skips lines that contain mer
  * occurrence count.
+ *
+ * Author(s): Filip Šaina, Marin Kukovačec
  */
 vector<string> read_mers(string inputPath){
     ifstream in(inputPath);
@@ -34,6 +36,8 @@ vector<string> read_mers(string inputPath){
  * Entry point of the command line application.
  * For parameters required to run this CLI application please reffer to the
  * proved README.md or run the tool with a --help flag.
+ *
+ * Author(s): Filip Šaina, Marin Vernier, Marin Kukovačec
  */
 int main(int argc, char *argv[]) {
     clock_t start = clock();

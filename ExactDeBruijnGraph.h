@@ -8,6 +8,11 @@
 
 using namespace std;
 
+/*
+ * Our Implementation of ExactDeBruijnGraph
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
+ */
 class ExactDeBruijnGraph {
 public:
     ExactDeBruijnGraph(string inputPath, unsigned int mer_counts, int k);

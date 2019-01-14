@@ -7,6 +7,8 @@ using namespace std;
 /*
  * Read a sequence from file. Method skips lines that contain mer
  * occurrence count.
+ *
+ * Author(s): Marin Vernier
  */
 string read_sequence(string inputPath){
     ifstream in(inputPath);
@@ -25,6 +27,8 @@ string read_sequence(string inputPath){
 
 /*
  * Entry point of the demo application.
+ *
+ * Author(s): Marin Vernier
  */
 int main(int argc, char *argv[]) {
     string command = "rm -rf temp";

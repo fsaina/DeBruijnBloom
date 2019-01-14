@@ -16,6 +16,8 @@ using namespace std;
  *
  * @param lengths - vector of sequence lengths
  * @return N50 measure value for the input lengths
+ *
+ * Author(s): Marin Vernier
  */
 float measures::n50(vector<int> lengths) {
     map<int, int> freq;

@@ -11,6 +11,11 @@
 
 using namespace std;
 
+/*
+ * Our custom implementation of Bloom Filter
+ *
+ * Author(s): Filip Šaina, Marin Vernier, Marin Kukovačec
+ */
 class BloomFilter {
     int numHashes;
     vector<bool> bits;

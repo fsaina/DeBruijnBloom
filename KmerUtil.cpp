@@ -2,6 +2,8 @@
 
 /*
  * Function that returns reverse complement of a k-mer
+ *
+ * Author(s): Marin Kukovačec
  */
 const string KmerUtil::reverseComplement(string kmer) {
     unsigned long length = kmer.size();
@@ -17,6 +19,8 @@ const string KmerUtil::reverseComplement(string kmer) {
 
 /*
  * Function that returns nucleobase complement
+ *
+ * Author(s): Marin Vernier
  */
 char KmerUtil::complement(char c) {
     switch (c) {
@@ -35,6 +39,8 @@ char KmerUtil::complement(char c) {
 
 /*
  * Function that generates left and right neighbours of a k-mer
+ *
+ * Author(s): Marin Vernier
  */
 vector<string> KmerUtil::generateExtensions(string kmer) {
     vector<string> E;
@@ -52,6 +58,8 @@ vector<string> KmerUtil::generateExtensions(string kmer) {
 
 /*
  * Function that generates left neighbours of a k-mer
+ *
+ * Author(s): Marin Vernier
  */
 vector<string> KmerUtil::generateLeftExtensions(string kmer) {
     vector<string> E;
@@ -66,6 +74,8 @@ vector<string> KmerUtil::generateLeftExtensions(string kmer) {
 
 /*
  * Function that generates right neighbours of a k-mer
+ *
+ * Author(s): Marin Vernier
  */
 vector<string> KmerUtil::generateRightExtensions(string kmer) {
     vector<string> E;
@@ -79,6 +89,8 @@ vector<string> KmerUtil::generateRightExtensions(string kmer) {
 
 /*
  * Function that takes first size - k characters
+ *
+ * Author(s): Marin Vernier
  */
 string KmerUtil::extractLastKmerInSequence(string sequence, int k) {
     return sequence.substr(sequence.size() - k);

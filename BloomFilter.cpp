@@ -11,6 +11,8 @@ using namespace std;
  * Args:
  *      filterSize (int) : Size of the underlying bit array
  *      numHashes (int) : Number of hash functions to use when populating the bit array
+ *
+ * Author(s): Filip Šaina, Marin Vernier, Marin Kukovačec
  */
 BloomFilter::BloomFilter(int filterSize, int numHashes) : bits(filterSize), numHashes(numHashes) {}
 
@@ -21,6 +23,8 @@ BloomFilter::BloomFilter(int filterSize, int numHashes) : bits(filterSize), numH
  * Args:
  *      merCounts (int) : Number of k-mers to be stored in the bloom filter
  *      k (int) : Length of all the mers
+ *
+ * Author(s): Filip Šaina
  */
 BloomFilter::BloomFilter(unsigned int merCounts, int k) {
     int filterSize = calculate_filter_size(merCounts, k);
@@ -39,6 +43,8 @@ BloomFilter::BloomFilter(unsigned int merCounts, int k) {
  * that will be stored within.
  *
  * Returns optimal filter size
+ *
+ * Author(s): Filip Šaina
  */
 int BloomFilter::calculate_filter_size(int kmerSize, int k) {
     return (int) (1.44 * kmerSize * log2(1/(2.08/(16*k))));
@@ -49,6 +55,8 @@ int BloomFilter::calculate_filter_size(int kmerSize, int k) {
  * that will be stored within.
  *
  * Returns optimal number of hash functions
+ *
+ * Author(s): Filip Šaina
  */
 int BloomFilter::calculate_number_of_hash_functions(int filterSize, float kmerSize) {
     return (int) filterSize/kmerSize*log(2);
@@ -58,6 +66,8 @@ int BloomFilter::calculate_number_of_hash_functions(int filterSize, float kmerSi
  * Map a given string to its appropriate hash number.
  *
  * Returns an array of two hash codes with a size of 64 bits
+ *
+ * Author(s): Marin Vernier
  */
 array<uint64_t, 2> BloomFilter::hash(const string *s) {
     array<uint64_t, 2> hashes;
@@ -70,6 +80,8 @@ array<uint64_t, 2> BloomFilter::hash(const string *s) {
  * Provided two independent hash values, the total filter size of the bit array and the required n-th
  * hash, return the n-th hash. This implementation of double hashing greatly reduces the number of
  * hash functions required for implementation in this application.
+ *
+ * Author(s): Marin Vernier
  */
 inline uint64_t BloomFilter::nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, uint64_t filterSize) {
     uint64_t h = (hashA + n * hashB) % filterSize;
@@ -80,6 +92,8 @@ inline uint64_t BloomFilter::nthHash(uint8_t n, uint64_t hashA, uint64_t hashB, 
  * Add a particular k-mer in the form of a string to the bloom filter
  *
  * @param s - string representation of a k-mer
+ *
+ * Author(s): Marin Vernier
  */
 void BloomFilter::add(const string s) {
     array<uint64_t, 2> hashes = hash(&s);
@@ -95,6 +109,8 @@ void BloomFilter::add(const string s) {
  *
  * @param s - string representation of a k-mer
  * @return boolean if the string is present in the bloom filter.
+ *
+ * Author(s): Marin Vernier
  */
 bool BloomFilter::contains(const string s) {
     array<uint64_t, 2> hashes = hash(&s);
@@ -117,6 +133,8 @@ bool BloomFilter::contains(const string s) {
 
 /**
  * Returns bloom filter size in bytes.
+ *
+ * Author(s): Marin Vernier
  */
 unsigned long BloomFilter::sizeInBytes() {
     return bits.size();

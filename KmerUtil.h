@@ -8,6 +8,8 @@ using namespace std;
 
 /*
  * Utils definition of functions used in ExtractDeBruijnGraph.cpp
+ *
+ * Author(s): Marin Vernier, Marin Kukovačec
  */
 namespace KmerUtil {
     const vector<string> BASES = { "A", "T", "C", "G" };
