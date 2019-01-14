@@ -14,6 +14,11 @@ Run `sh ./INSTALL.sh` to setup the project. The script will:
 Execution example: `./bin/DeBrujinBloom -k 21 --minAbundance 3 --maxBreadth 20 --maxDepth 500 --input data/ecoli/ecoli.fasta`
 For more information run `./bin/DeBrujinBloom --help`
 
+### Run test example
+To run test example:
+1. Run `g++ -std=c++14 Demo.cpp -o bin/Demo` to compile
+2. Run `./bin/Demo` to execute
+
 ### Data
 The E.Coli genome (data/ecoli.fasta) was taken from http://bacteria.ensembl.org/Escherichia_coli_14a/Info/Index/
 

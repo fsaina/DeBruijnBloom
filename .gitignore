@@ -233,6 +233,7 @@ Temporary Items
 # Custom files
 output/
 tmp/
+temp/
 jellyfish
 .idea/
 bin/
