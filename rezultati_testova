@@ -8,9 +8,9 @@
 #Memorija - Veličina grafa(bytes)
 910 2030    5453    11256   22554   56539   113449  219163  567560  1135148
 #Pokrivenost(zbroj contiga / ukupna duljina)
-
+1   1   1   1   1   1   1   0.7333  0.99966 0.87323
 #Točnost(prosjek točnosti generiranih contiga, dobiveno iz blastn-a)
-
+1   1   1   1   1   1   1   0.9909  1   0.9902
 #N50
 100 200 500 1000    2000    5000    10000   5413    42741   86803
 
@@ -23,8 +23,8 @@
 #Memorija(procjena veličine grafa, bytes)
 608 1216    3083    6167    12356   30881   61783   123567  308918  617857
 #Pokrivenost(zbroj contiga / ukupna duljina)
-
+1   1   1   1   1   1   1   0.97145 1.00084 1.00042
 #Točnost(prosjek točnosti generiranih contiga, dobiveno iz blastn-a)
-
+1   1   1   1   1   1   1   0.9981  1   0.997
 #N50
 100 200 500 1000    2000    5000    10000   5413    42741   52069
