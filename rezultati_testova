@@ -5,14 +5,14 @@
 
 #Vrijeme(s)
 0.003615    0.006244    0.013416    0.024502    0.0515    0.12621 0.308075  0.490855    1.40614 2.92342
-#Memorija
-
+#Memorija(B)
+72704
 #Pokrivenost(zbroj contiga / ukupna duljina)
 
 #Točnost(prosjek točnosti generiranih contiga, dobiveno iz blastn-a)
 
 #N50
-
+100
 #Veličina grafa
 
 

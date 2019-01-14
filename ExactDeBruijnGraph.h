@@ -16,6 +16,8 @@ public:
 
     void traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth);
 
+    unsigned long graphSizeInBytes();
+
 private:
     int k;
     BloomFilter bloomFilter;

@@ -114,3 +114,7 @@ bool BloomFilter::contains(const string s) {
     }
     return true;
 }
+
+unsigned long BloomFilter::sizeInBytes() {
+    return bits.size();
+}

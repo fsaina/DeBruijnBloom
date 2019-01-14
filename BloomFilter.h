@@ -20,6 +20,7 @@ public:
     BloomFilter(unsigned int mer_counts, int k);
     void add(const string s);
     bool contains(const string s);
+    unsigned long sizeInBytes();
 
 private:
     array<uint64_t, 2> hash(const std::string *s);

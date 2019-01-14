@@ -73,6 +73,16 @@ bool ExactDeBruijnGraph::isPartOfDeBruijnGraph(string kmer) {
 }
 
 /*
+ * Method used to print graph size. Size of Bloom filter + size of cFP structure.
+ */
+unsigned long ExactDeBruijnGraph::graphSizeInBytes() {
+    unsigned long size = 0;
+    size += bloomFilter.sizeInBytes();
+    size += criticalFP.size() * k;
+    return size;
+}
+
+/*
  * Function for graph traversal. It starts from a solid k-mer and, using Bloom filter and cFP structure, looks for
  * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
  * be saved as an argument.

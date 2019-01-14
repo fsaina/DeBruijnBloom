@@ -106,6 +106,7 @@ int main(int argc, char *argv[]) {
     clock_t end = clock();
     double time = double(end - start) / CLOCKS_PER_SEC;
     cout << "Time: " << time << " seconds" << endl;
+    cout << "DeBruijn graph size(bytes): " << graph.graphSizeInBytes() << endl;
 
     if (outputN50 == true) {
         cout << endl;
