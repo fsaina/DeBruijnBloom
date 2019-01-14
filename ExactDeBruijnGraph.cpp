@@ -13,6 +13,9 @@ ExactDeBruijnGraph::ExactDeBruijnGraph(string inputPath, unsigned int mer_counts
     findCriticalFP(inputPath);
 }
 
+/*
+ * Loads kmers from file given in arguments and populates the Bloom filter with them.
+ */
 void ExactDeBruijnGraph::initializeBloomFilter(string inputPath) {
     cout << "Creating Bloom filter..." << endl;
 
@@ -187,7 +190,11 @@ void ExactDeBruijnGraph::simple_traverse(string inputPath, string outputPath, in
     output.close();
 }
 
-
+/*
+ * Function for graph traversal. It starts from a solid k-mer and, using Bloom filter and cFP structure, looks for
+ * its neighbours using bounded-breadth, bounded-depth BFS. Method takes the name of the file in which contigs will
+ * be saved as an argument.
+ */
 void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBreadth, int maxDepth) {
     cout << "Start traversal..." << endl;
 
@@ -227,15 +234,17 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
 
         int depth = 0; // depth is counted in nodes
         while (paths.size() > 0) {
-            if (depth >= maxDepth) {
+            if (depth >= maxDepth) { // if BFS search reaches the max value bound
                 contigs.insert(paths.back());
                 break;
             }
 
+            // auxiliary lists used to memorize elements, for the sake of not updating the iterating list
             list<string> pathsToAdd;
             list<string> pathsToRemove;
 
             int breadth = paths.size();
+            // if path is simple(no branching) just expand the current contig
             if (breadth == 1) {
                 for (string& path : paths) {
                     string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
@@ -252,12 +261,15 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
 
                     unsigned long validExtensionsCount = validExtensions.size();
                     if (validExtensionsCount == 0) {
+                        // end of search
                         contigs.insert(path);
                         pathsToRemove.push_back(path);
                     } else if (validExtensionsCount == 1) {
+                        // expand current contig
                         char &lastChar = validExtensions[0].back();
                         path.push_back(lastChar);
                     } else {
+                        // here starts the branch, save current contig and make branches, from now BFS will start
                         contigs.insert(path);
                         pathsToRemove.push_back(path);
                         for(string validE : validExtensions) {
@@ -267,6 +279,7 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
                     }
                 }
             } else {
+                // there are more active branches, BFS search
                 depth++;
                 for (string& path : paths) {
                     string lastKmer = KmerUtil::extractLastKmerInSequence(path, k);
@@ -284,11 +297,14 @@ void ExactDeBruijnGraph::traverse(string inputPath, string outputPath, int maxBr
                     string pathClone(path);
                     unsigned long validExtensionsCount = validExtensions.size();
                     if (validExtensionsCount == 0) {
+                        // current branch is over, this way if one branch remains active the search is going to continue normally
                         pathsToRemove.push_back(path);
                     } else if (validExtensionsCount == 1) {
+                        // expand current branch
                         char &lastChar = validExtensions[0].back();
                         path.push_back(lastChar);
                     } else {
+                        // try to branch more
                         for(string validE : validExtensions) {
                             char &lastChar = validE.back();
                             string newPath(pathClone);
